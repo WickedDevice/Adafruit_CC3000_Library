@@ -34,8 +34,9 @@
 #include "utility/debug.h"
 #include "utility/sntp.h"
 
-uint8_t g_csPin, g_irqPin, g_vbatPin, g_IRQnum, g_SPIspeed;
+uint8_t g_IRQnum, g_SPIspeed;
 
+/*
 static const uint8_t dreqinttable[] = {
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined (__AVR_ATmega328__) || defined(__AVR_ATmega8__) 
   2, 0,
@@ -77,6 +78,7 @@ static const uint8_t dreqinttable[] = {
   1, 3,
 #endif
 };
+*/
 
 /***********************/
 
@@ -168,12 +170,9 @@ bool Adafruit_CC3000::scanSSIDs(uint32_t time)
     @brief  Instantiates a new CC3000 class
 */
 /**************************************************************************/
-Adafruit_CC3000::Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin, uint8_t SPIspeed)
+Adafruit_CC3000::Adafruit_CC3000(uint8_t SPIspeed)
 {
   _initialised = false;
-  g_csPin = csPin;
-  g_irqPin = irqPin;
-  g_vbatPin = vbatPin;
   g_IRQnum = 0xFF;
   g_SPIspeed = SPIspeed;
 
@@ -214,23 +213,24 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
 {
   if (_initialised) return true;
 
-  #ifndef CORE_ADAX
+  //#ifndef CORE_ADAX
   // determine irq #
-  for (uint8_t i=0; i<sizeof(dreqinttable); i+=2) {
-    if (g_irqPin == dreqinttable[i]) {
-      g_IRQnum = dreqinttable[i+1];
-    }
-  }
-  if (g_IRQnum == 0xFF) {
-    if (CC3KPrinter != 0) {
-      CC3KPrinter->println(F("IRQ pin is not an INT pin!"));
-    }
-    return false;
-  }
-  #else
-  g_IRQnum = g_irqPin;
+  //for (uint8_t i=0; i<sizeof(dreqinttable); i+=2) {
+  //  if (g_irqPin == dreqinttable[i]) {
+  //    g_IRQnum = dreqinttable[i+1];
+  //  }
+  //}
+  //if (g_IRQnum == 0xFF) {
+  //  if (CC3KPrinter != 0) {
+  //    CC3KPrinter->println(F("IRQ pin is not an INT pin!"));
+  //  }
+  // return false;
+  //}
+  //#else
+  //g_IRQnum = g_irqPin;
   // (almost) every single pin on Xmega supports interrupt
-  #endif
+  //#endif
+  g_IRQnum = 2;
 
   init_spi();
   

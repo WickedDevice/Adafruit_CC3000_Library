@@ -69,6 +69,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <ccspi.h>
 #include <SPI.h>
 #include <sha1.h>
+#include <WildFire.h>
+WildFire wf;
 
 // --------------------------------------------------------------------------
 // This is a relatively complex sketch, not recommended as a first
@@ -80,15 +82,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // Configurable globals and defines.  Edit to your needs. -------------------
 
-// CC3000 interrupt and control pins
-#define ADAFRUIT_CC3000_IRQ   3 // MUST be an interrupt pin!
-#define ADAFRUIT_CC3000_VBAT  5 // These can be
-#define ADAFRUIT_CC3000_CS   10 // any two pins
-// Hardware SPI required for remaining pins.
-// On an UNO, SCK = 13, MISO = 12, and MOSI = 11
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(
-  ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT,
-  SPI_CLOCK_DIV2);
+Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIV2);
 
 // WiFi access point credentials
 #define WLAN_SSID     "myNetwork"  // 32 characters max
@@ -125,6 +119,8 @@ Adafruit_CC3000_Client
 void setup(void) {
 
   uint32_t ip = 0L, t;
+
+  wf.begin();
 
   Serial.begin(115200);
 
