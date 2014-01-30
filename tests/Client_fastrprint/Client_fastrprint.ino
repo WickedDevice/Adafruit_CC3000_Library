@@ -18,6 +18,8 @@
 #include <SPI.h>
 #include <string.h>
 #include "utility/debug.h"
+#include <WildFire.h>
+WildFire wildfire;
 
 Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIV2); // you can change this clock speed
 
@@ -130,6 +132,9 @@ void runTest(void) {
 // Set up the HW and the CC3000 module (called automatically on startup)
 void setup(void)
 {
+
+  wildfire.begin();
+  
   Serial.begin(115200);
   Serial.println(F("Hello, CC3000!\n")); 
   
