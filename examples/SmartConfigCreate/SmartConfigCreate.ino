@@ -46,7 +46,7 @@
 #include <WildFire.h>
 WildFire wf;
 
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIV2);
+Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIVIDER);
 
 // The SSID & Password are retrieved via the Smartconfig app
 

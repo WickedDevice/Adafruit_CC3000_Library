@@ -76,6 +76,22 @@ static const uint8_t dreqinttable[] = {
   2, 1,
   0, 2,
   1, 3,
+#elif defined(__arm__) && defined(__SAM3X8E__) // Arduino Due  
+  0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 
+  5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 
+  10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 
+  15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 
+  20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 
+  25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 
+  30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 
+  35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 
+  40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 
+  45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 
+  50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 
+  55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 
+  60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 
+  65, 65, 66, 66, 67, 67, 68, 68, 69, 69,
+  70, 70, 71, 71,
 #endif
 };
 */
@@ -181,7 +197,7 @@ Adafruit_CC3000::Adafruit_CC3000(uint8_t SPIspeed)
   ulSocket              = 0;
   ulSmartConfigFinished = 0;
 
-  #if defined(UDR0) || defined(UDR1) || defined(CORE_TEENSY)
+  #if defined(UDR0) || defined(UDR1) || defined(CORE_TEENSY) || ( defined (__arm__) && defined (__SAM3X8E__) )
   CC3KPrinter = &Serial;
   #else
   CC3KPrinter = 0;
@@ -569,10 +585,10 @@ bool Adafruit_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t 
   if (ipconfig.aucIP[3] == 0) return false;
 
   memcpy(retip, ipconfig.aucIP, 4);
-  memcpy(netmask, ipconfig.aucIP+4, 4);
-  memcpy(gateway, ipconfig.aucIP+8, 4);
-  memcpy(dhcpserv, ipconfig.aucIP+12, 4);
-  memcpy(dnsserv, ipconfig.aucIP+16, 4);
+  memcpy(netmask, ipconfig.aucSubnetMask, 4);
+  memcpy(gateway, ipconfig.aucDefaultGateway, 4);
+  memcpy(dhcpserv, ipconfig.aucDHCPServer, 4);
+  memcpy(dnsserv, ipconfig.aucDNSServer, 4);
 
   return true;
 }
@@ -726,7 +742,6 @@ bool Adafruit_CC3000::startSmartConfig(bool enableAES)
   ulCC3000DHCP = 0;
   OkToDoShutDown=0;
 
-  uint8_t    loop = 0;
   uint32_t   timeout = 0;
 
   if (!_initialised) {
@@ -950,9 +965,6 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
 #ifndef CC3000_TINY_DRIVER
 bool Adafruit_CC3000::connectSecure(const char *ssid, const char *key, int32_t secMode)
 {
-  int8_t  _key[MAXLENGTHKEY];
-  uint8_t _ssid[MAXSSID];
-  
   if (!_initialised) {
     return false;
   }
@@ -1059,7 +1071,7 @@ uint16_t Adafruit_CC3000::ping(uint32_t ip, uint8_t attempts, uint16_t timeout, 
   if (!ulCC3000Connected) return 0;
   if (!ulCC3000DHCP) return 0;
 
-  uint32_t revIP = (ip >> 24) | (ip >> 8) & 0xFF00 | (ip << 8) & 0xFF0000 | (ip << 24);
+  uint32_t revIP = (ip >> 24) | ((ip >> 8) & 0xFF00) | ((ip & 0xFF00) << 8) | (ip << 24);
 
   pingReportnum = 0;
   pingReport.packets_received = 0;

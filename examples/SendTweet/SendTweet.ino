@@ -82,7 +82,7 @@ WildFire wf;
 
 // Configurable globals and defines.  Edit to your needs. -------------------
 
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIV2);
+Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIVIDER);
 
 // WiFi access point credentials
 #define WLAN_SSID     "myNetwork"  // 32 characters max
