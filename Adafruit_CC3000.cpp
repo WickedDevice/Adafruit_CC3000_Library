@@ -33,7 +33,7 @@
 #include "utility/wlan.h"
 #include "utility/debug.h"
 #include "utility/sntp.h"
-
+#include <avr/wdt.h>
 uint8_t g_IRQnum, g_SPIspeed;
 
 /*
@@ -203,6 +203,8 @@ Adafruit_CC3000::Adafruit_CC3000(uint8_t SPIspeed)
   CC3KPrinter = 0;
   // no default serial port found
   #endif
+  
+  //CC3KPrinter = 0;  
 }
 
 /* *********************************************************************** */
@@ -251,6 +253,7 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
   init_spi();
   
   DEBUGPRINT_F("init\n\r");
+  wdt_reset();
   wlan_init(CC3000_UsynchCallback,
             sendWLFWPatch, sendDriverPatch, sendBootLoaderPatch,
             ReadWlanInterruptPin,
@@ -259,6 +262,7 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
             WriteWlanPin);
   DEBUGPRINT_F("start\n\r");
 
+  wdt_reset();
   wlan_start(patchReq);
   
   DEBUGPRINT_F("ioctl\n\r");
@@ -267,8 +271,11 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
   if (!useSmartConfigData)
   {
     // Manual connection only (no auto, profiles, etc.)
+    wdt_reset();    
     wlan_ioctl_set_connection_policy(0, 0, 0);
     // Delete previous profiles from memory
+    
+    wdt_reset();    
     wlan_ioctl_del_profile(255);
   }
   else
@@ -280,9 +287,11 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
     // wlan_ioctl_set_connection_policy(0, 1, 0)
 
     // Use Profiles - the CC3000 device tries to connect to an AP from profiles:
+    wdt_reset();   
     wlan_ioctl_set_connection_policy(0, 0, 1);
   }
 
+  wdt_reset();
   CHECK_SUCCESS(
     wlan_set_event_mask(HCI_EVNT_WLAN_UNSOL_INIT        |
                         //HCI_EVNT_WLAN_ASYNC_PING_REPORT |// we want ping reports
@@ -1018,9 +1027,14 @@ bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     /* MEME: not sure why this is absolutely required but the cc3k freaks
        if you dont. maybe bootup delay? */
     // Setup a 4 second SSID scan
+    wdt_reset();
     scanSSIDs(4000);
+    
     // Wait for results
+    wdt_reset();    
     delay(4500);
+    
+    wdt_reset();    
     scanSSIDs(0);
     
     /* Attempt to connect to an access point */
@@ -1031,6 +1045,7 @@ bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     }
     if ((secmode == 0) || (strlen(key) == 0)) {
       /* Connect to an unsecured network */
+      wdt_reset();      
       if (! connectOpen(ssid)) {
         if (CC3KPrinter != 0) CC3KPrinter->println(F("Failed!"));
         continue;
@@ -1039,6 +1054,7 @@ bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
       /* NOTE: Secure connections are not available in 'Tiny' mode! */
 #ifndef CC3000_TINY_DRIVER
       /* Connect to a secure network using WPA2, etc */
+      wdt_reset();      
       if (! connectSecure(ssid, key, secmode)) {
         if (CC3KPrinter != 0) CC3KPrinter->println(F("Failed!"));
         continue;
