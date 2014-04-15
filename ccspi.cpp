@@ -234,7 +234,8 @@ int init_spi(void)
 
   /* Set CS pin to output (don't de-assert yet) */
   DDRB |= _BV(4);  // pinMode(g_csPin, OUTPUT);
-
+  PORTB |= _BV(4); // drive it high
+  
   /* Set interrupt/gpio pin to input */
   PORTB |= _BV(2); // digitalWrite(g_irqPin, HIGH); // w/weak pullup
 
