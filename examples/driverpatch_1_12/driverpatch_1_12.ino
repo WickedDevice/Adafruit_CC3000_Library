@@ -15,12 +15,10 @@
 #include "utility/debug.h"
 #include "utility/nvmem.h"
 #include "driverpatchinc.h"
+#include <WildFire.h>
+WildFire wf;
 
-#define ADAFRUIT_CC3000_IRQ   3  // MUST be an interrupt pin!
-#define ADAFRUIT_CC3000_CS    10
-#define ADAFRUIT_CC3000_VBAT  5
-
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT);
+Adafruit_CC3000 cc3000;
 
 /**************************************************************************/
 /*!
@@ -129,20 +127,13 @@ uint16_t aFATEntries[2][NVMEM_RM_FILEID + 1] =
 
 void setup(void)
 {
+  wf.begin();
+  
   Serial.begin(115200);
   Serial.println(F("Hello, CC3000!\n")); 
 
   Serial.println(F("Hit any key & return to start"));
   while (!Serial.available());
- 
-  pinMode(9, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(6, OUTPUT);
-  digitalWrite(9, LOW);
-  digitalWrite(8, LOW);
-  digitalWrite(7, LOW);
-  digitalWrite(6, LOW);
   
   displayDriverMode();
   displayFreeRam();

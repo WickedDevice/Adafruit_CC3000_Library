@@ -35,7 +35,7 @@ module.
 #include <WildFire.h>
 WildFire wf;
 
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIVIDER); // you can change this clock speed but DI
+Adafruit_CC3000 cc3000;
 
 #define WLAN_SSID       "myNetwork"        // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"
