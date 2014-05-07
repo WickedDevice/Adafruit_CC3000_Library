@@ -38,15 +38,15 @@
     vetted! It might not work on all networks!    
 */
  
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <string.h>
 #include "utility/debug.h"
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 // The SSID & Password are retrieved via the Smartconfig app
 
@@ -106,7 +106,7 @@ void setup(void)
   }
   
   Serial.println(F("\nTo use these connection details be sure to use"));
-  Serial.println(F("'.begin(false, true)' with your Adafruit_CC3000"));
+  Serial.println(F("'.begin(false, true)' with your WildFire_CC3000"));
   Serial.println(F("code instead of the default '.begin()' values!"));
   
   /* You need to make sure to clean up after yourself or the CC3000 can freak out */

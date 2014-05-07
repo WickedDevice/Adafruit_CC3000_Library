@@ -25,15 +25,15 @@ This example does a test of the TCP client capability:
 SmartConfig is still beta and kind of works but is not fully vetted!
 It might not work on all networks!
 */
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <string.h>
 #include "utility/debug.h"
 #include <WildFire.h>
-WildFire wildfire;
+WildFire wildfire(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 #define WLAN_SSID       "myNetwork"           // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"
@@ -120,7 +120,7 @@ void setup(void)
   /* Try connecting to the website.
      Note: HTTP/1.1 protocol is used to keep the server from closing the connection before all data is read.
   */
-  Adafruit_CC3000_Client www = cc3000.connectTCP(ip, 80);
+  WildFire_CC3000_Client www = cc3000.connectTCP(ip, 80);
   if (www.connected()) {
     www.fastrprint(F("GET "));
     www.fastrprint(WEBPAGE);

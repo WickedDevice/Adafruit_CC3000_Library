@@ -65,12 +65,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <sha1.h>
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
 // --------------------------------------------------------------------------
 // This is a relatively complex sketch, not recommended as a first
@@ -82,7 +82,7 @@ WildFire wf;
 
 // Configurable globals and defines.  Edit to your needs. -------------------
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 // WiFi access point credentials
 #define WLAN_SSID     "myNetwork"  // 32 characters max
@@ -108,7 +108,7 @@ const unsigned long
   responseTimeout = 15L * 1000L; // Max time to wait for data from server
 unsigned long
   currentTime = 0L;
-Adafruit_CC3000_Client
+WildFire_CC3000_Client
   client;        // For WiFi connections
 
 // Similar to F(), but for PROGMEM string pointers rather than literals
@@ -168,7 +168,7 @@ void loop() {
   // For now this just issues a fixed tweet.  In reality, you might want to
   // read from some sensors or that sort of thing, then nicely format the
   // results into a buffer to be passed to the sendTweet() function.
-  sendTweet("Adafruit IoTa test. Tweet directly from Arduino...no proxy, no wires! http://www.adafruit.com/products/1469");
+  sendTweet("WildFire IoTa test. Tweet directly from Arduino...no proxy, no wires! http://shop.wickeddevice.com/product/wildfire/");
 
   // Delay remainder of 1 hour (takes tweeting time into account)
   Serial.println("Waiting ~1 hour...");

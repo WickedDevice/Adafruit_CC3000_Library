@@ -6,7 +6,7 @@
 // the MAC address in EEPROM so before you begin, write down your mac address!
 // You can re-burn the mac address in the buildtest example
 
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <string.h>
@@ -16,9 +16,9 @@
 #include "utility/nvmem.h"
 #include "driverpatchinc.h"
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 /**************************************************************************/
 /*!

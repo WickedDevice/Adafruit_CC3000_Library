@@ -23,20 +23,20 @@ The RTClib library (a separate download, and not used here) contains
 functions to convert UNIX time to other formats if needed.
 */
 
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 #define WLAN_SSID       "myNetwork"        // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
-Adafruit_CC3000_Client client;
+WildFire_CC3000_Client client;
 
 const unsigned long
   connectTimeout  = 15L * 1000L, // Max time to wait for server connection

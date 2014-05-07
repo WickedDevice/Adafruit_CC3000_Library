@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-  @file     Adafruit_CC3000.cpp
+  @file     WildFire_CC3000.cpp
   @author   KTOWN (Kevin Townsend for Adafruit Industries)
 	@license  BSD (see license.txt)
 
@@ -20,7 +20,7 @@
 	v1.0    - Initial release
 */
 /**************************************************************************/
-#include "Adafruit_CC3000.h"
+#include "WildFire_CC3000.h"
 #include "ccspi.h"
 
 #include <avr/wdt.h>
@@ -170,7 +170,7 @@ Print* CC3KPrinter; // user specified output stream for general messages and deb
 */
 /**************************************************************************/
 #ifndef CC3000_TINY_DRIVER
-bool Adafruit_CC3000::scanSSIDs(uint32_t time)
+bool WildFire_CC3000::scanSSIDs(uint32_t time)
 {
   const unsigned long intervalTime[16] = { 2000, 2000, 2000, 2000,  2000,
     2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000 };
@@ -209,7 +209,7 @@ bool Adafruit_CC3000::scanSSIDs(uint32_t time)
     @brief  Instantiates a new CC3000 class
 */
 /**************************************************************************/
-Adafruit_CC3000::Adafruit_CC3000(uint8_t wildfire_board_version)
+WildFire_CC3000::WildFire_CC3000(uint8_t wildfire_board_version)
 {
   _initialised = false;
   
@@ -260,7 +260,7 @@ Adafruit_CC3000::Adafruit_CC3000(uint8_t wildfire_board_version)
               clean connection
 */
 /**************************************************************************/
-bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
+bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
 {
   if (_initialised) return true;
  
@@ -353,7 +353,7 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
     @param  numBytes  Data length in bytes
 */
 /**************************************************************************/
-void Adafruit_CC3000::printHex(const byte * data, const uint32_t numBytes)
+void WildFire_CC3000::printHex(const byte * data, const uint32_t numBytes)
 {
   if (CC3KPrinter == 0) return;
 
@@ -384,7 +384,7 @@ void Adafruit_CC3000::printHex(const byte * data, const uint32_t numBytes)
     @param  numBytes  Data length in bytes
 */
 /**************************************************************************/
-void Adafruit_CC3000::printHexChar(const byte * data, const uint32_t numBytes)
+void WildFire_CC3000::printHexChar(const byte * data, const uint32_t numBytes)
 {
   if (CC3KPrinter == 0) return;
 
@@ -417,7 +417,7 @@ void Adafruit_CC3000::printHexChar(const byte * data, const uint32_t numBytes)
 */
 /**************************************************************************/
 
-void Adafruit_CC3000::printIPdots(uint32_t ip) {
+void WildFire_CC3000::printIPdots(uint32_t ip) {
   if (CC3KPrinter == 0) return;
   CC3KPrinter->print((uint8_t)(ip));
   CC3KPrinter->print('.');
@@ -434,7 +434,7 @@ void Adafruit_CC3000::printIPdots(uint32_t ip) {
             the bytes in reverse order
 */
 /**************************************************************************/
-void Adafruit_CC3000::printIPdotsRev(uint32_t ip) {
+void WildFire_CC3000::printIPdotsRev(uint32_t ip) {
   if (CC3KPrinter == 0) return;
   CC3KPrinter->print((uint8_t)(ip >> 24));
   CC3KPrinter->print('.');
@@ -450,7 +450,7 @@ void Adafruit_CC3000::printIPdotsRev(uint32_t ip) {
     @brief  Helper function to convert four bytes to a U32 IP value
 */
 /**************************************************************************/
-uint32_t Adafruit_CC3000::IP2U32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
+uint32_t WildFire_CC3000::IP2U32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
   uint32_t ip = a;
   ip <<= 8;
   ip |= b;
@@ -467,7 +467,7 @@ uint32_t Adafruit_CC3000::IP2U32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
     @brief   Reboot CC3000 (stop then start)
 */
 /**************************************************************************/
-void Adafruit_CC3000::reboot(uint8_t patch)
+void WildFire_CC3000::reboot(uint8_t patch)
 {
   if (!_initialised)
   {
@@ -484,7 +484,7 @@ void Adafruit_CC3000::reboot(uint8_t patch)
     @brief   Stop CC3000
 */
 /**************************************************************************/
-void Adafruit_CC3000::stop(void)
+void WildFire_CC3000::stop(void)
 {
   if (!_initialised)
   {
@@ -501,7 +501,7 @@ void Adafruit_CC3000::stop(void)
     @returns  False if an error occured!
 */
 /**************************************************************************/
-bool Adafruit_CC3000::disconnect(void)
+bool WildFire_CC3000::disconnect(void)
 {
   if (!_initialised)
   {
@@ -520,7 +520,7 @@ bool Adafruit_CC3000::disconnect(void)
     @returns  False if an error occured!
 */
 /**************************************************************************/
-bool Adafruit_CC3000::deleteProfiles(void)
+bool WildFire_CC3000::deleteProfiles(void)
 {
   if (!_initialised)
   {
@@ -544,7 +544,7 @@ bool Adafruit_CC3000::deleteProfiles(void)
     @returns  False if an error occured!
 */
 /**************************************************************************/
-bool Adafruit_CC3000::getMacAddress(uint8_t address[6])
+bool WildFire_CC3000::getMacAddress(uint8_t address[6])
 {
   if (!_initialised)
   {
@@ -566,7 +566,7 @@ bool Adafruit_CC3000::getMacAddress(uint8_t address[6])
     @returns  False if an error occured!
 */
 /**************************************************************************/
-bool Adafruit_CC3000::setMacAddress(uint8_t address[6])
+bool WildFire_CC3000::setMacAddress(uint8_t address[6])
 {
   if (!_initialised)
   {
@@ -595,7 +595,7 @@ bool Adafruit_CC3000::setMacAddress(uint8_t address[6])
     @returns  False if an error occured!
 */
 /**************************************************************************/
-bool Adafruit_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t *gateway, uint32_t *dhcpserv, uint32_t *dnsserv)
+bool WildFire_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t *gateway, uint32_t *dhcpserv, uint32_t *dnsserv)
 {
   if (!_initialised) return false;
   if (!cc3000Bitset.test(CC3000BitSet::IsConnected)) return false;
@@ -627,7 +627,7 @@ bool Adafruit_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t 
 */
 /**************************************************************************/
 #ifndef CC3000_TINY_DRIVER
-bool Adafruit_CC3000::getFirmwareVersion(uint8_t *major, uint8_t *minor)
+bool WildFire_CC3000::getFirmwareVersion(uint8_t *major, uint8_t *minor)
 {
   uint8_t fwpReturn[2];
 
@@ -655,7 +655,7 @@ bool Adafruit_CC3000::getFirmwareVersion(uint8_t *major, uint8_t *minor)
 */
 /**************************************************************************/
 #ifndef CC3000_TINY_DRIVER
-status_t Adafruit_CC3000::getStatus()
+status_t WildFire_CC3000::getStatus()
 {
   if (!_initialised)
   {
@@ -702,7 +702,7 @@ status_t Adafruit_CC3000::getStatus()
 ResultStruct_t SSIDScanResultBuff;
 
 
-uint16_t Adafruit_CC3000::startSSIDscan() {
+uint16_t WildFire_CC3000::startSSIDscan() {
   uint16_t   index = 0;
 
   if (!_initialised)
@@ -727,13 +727,13 @@ uint16_t Adafruit_CC3000::startSSIDscan() {
   return index;
 }
 
-void Adafruit_CC3000::stopSSIDscan(void) {
+void WildFire_CC3000::stopSSIDscan(void) {
 
   // Stop scanning
   scanSSIDs(0);
 }
 
-uint8_t Adafruit_CC3000::getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssidname) {
+uint8_t WildFire_CC3000::getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssidname) {
     uint8_t valid = (SSIDScanResultBuff.rssiByte & (~0xFE));
     *rssi = (SSIDScanResultBuff.rssiByte >> 1);
     *secMode = (SSIDScanResultBuff.Sec_ssidLen & (~0xFC));
@@ -758,7 +758,7 @@ uint8_t Adafruit_CC3000::getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssid
 */
 /**************************************************************************/
 #ifndef CC3000_TINY_DRIVER
-bool Adafruit_CC3000::startSmartConfig(bool enableAES)
+bool WildFire_CC3000::startSmartConfig(bool enableAES)
 {
   cc3000Bitset.clear();
 
@@ -893,7 +893,7 @@ bool Adafruit_CC3000::startSmartConfig(bool enableAES)
     @returns  False if an error occured!
 */
 /**************************************************************************/
-bool Adafruit_CC3000::connectOpen(const char *ssid)
+bool WildFire_CC3000::connectOpen(const char *ssid)
 {
   if (!_initialised) {
     return false;
@@ -982,7 +982,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
 */
 /**************************************************************************/
 #ifndef CC3000_TINY_DRIVER
-bool Adafruit_CC3000::connectSecure(const char *ssid, const char *key, int32_t secMode)
+bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t secMode)
 {
   if (!_initialised) {
     return false;
@@ -1027,7 +1027,7 @@ bool Adafruit_CC3000::connectSecure(const char *ssid, const char *key, int32_t s
 #endif
 
 // Connect with timeout
-bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t secmode) {
+bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t secmode) {
   if (!_initialised) {
     return false;
   }
@@ -1102,7 +1102,7 @@ bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
 
 
 #ifndef CC3000_TINY_DRIVER
-uint16_t Adafruit_CC3000::ping(uint32_t ip, uint8_t attempts, uint16_t timeout, uint8_t size) {
+uint16_t WildFire_CC3000::ping(uint32_t ip, uint8_t attempts, uint16_t timeout, uint8_t size) {
   if (!_initialised) return 0;
   if (!cc3000Bitset.test(CC3000BitSet::IsConnected)) return 0;
   if (!cc3000Bitset.test(CC3000BitSet::HasDHCP)) return 0;
@@ -1142,7 +1142,7 @@ uint16_t Adafruit_CC3000::ping(uint32_t ip, uint8_t attempts, uint16_t timeout, 
 #endif
 
 #ifndef CC3000_TINY_DRIVER
-uint16_t Adafruit_CC3000::getHostByName(char *hostname, uint32_t *ip) {
+uint16_t WildFire_CC3000::getHostByName(char *hostname, uint32_t *ip) {
   if (!_initialised) return 0;
   if (!cc3000Bitset.test(CC3000BitSet::IsConnected)) return 0;
   if (!cc3000Bitset.test(CC3000BitSet::HasDHCP)) return 0;
@@ -1160,7 +1160,7 @@ uint16_t Adafruit_CC3000::getHostByName(char *hostname, uint32_t *ip) {
     @returns  True if connected
 */
 /**************************************************************************/
-bool Adafruit_CC3000::checkConnected(void)
+bool WildFire_CC3000::checkConnected(void)
 {
   return cc3000Bitset.test(CC3000BitSet::IsConnected);
 }
@@ -1172,7 +1172,7 @@ bool Adafruit_CC3000::checkConnected(void)
     @returns  True if DHCP process is complete (IP address assigned)
 */
 /**************************************************************************/
-bool Adafruit_CC3000::checkDHCP(void)
+bool WildFire_CC3000::checkDHCP(void)
 {
   return cc3000Bitset.test(CC3000BitSet::HasDHCP);
 }
@@ -1184,7 +1184,7 @@ bool Adafruit_CC3000::checkDHCP(void)
     @returns  True if smart config is finished
 */
 /**************************************************************************/
-bool Adafruit_CC3000::checkSmartConfigFinished(void)
+bool WildFire_CC3000::checkSmartConfigFinished(void)
 {
   return cc3000Bitset.test(CC3000BitSet::IsSmartConfigFinished);
 }
@@ -1197,7 +1197,7 @@ bool Adafruit_CC3000::checkSmartConfigFinished(void)
     @returns  True if smart config is finished
 */
 /**************************************************************************/
-bool Adafruit_CC3000::getIPConfig(tNetappIpconfigRetArgs *ipConfig)
+bool WildFire_CC3000::getIPConfig(tNetappIpconfigRetArgs *ipConfig)
 {
   if (!_initialised)      return false;
   if (!cc3000Bitset.test(CC3000BitSet::IsConnected)) return false;
@@ -1214,7 +1214,7 @@ bool Adafruit_CC3000::getIPConfig(tNetappIpconfigRetArgs *ipConfig)
     @brief  Quick socket test to pull contents from the web
 */
 /**************************************************************************/
-Adafruit_CC3000_Client Adafruit_CC3000::connectTCP(uint32_t destIP, uint16_t destPort)
+WildFire_CC3000_Client WildFire_CC3000::connectTCP(uint32_t destIP, uint16_t destPort)
 {
   sockaddr      socketAddress;
   int32_t       tcp_socket;
@@ -1227,7 +1227,7 @@ Adafruit_CC3000_Client Adafruit_CC3000::connectTCP(uint32_t destIP, uint16_t des
     CHECK_PRINTER {
 		CC3KPrinter->println(F("Failed to open socket"));
 	}
-    return Adafruit_CC3000_Client();
+    return WildFire_CC3000_Client();
   }
   //CC3KPrinter->print(F("DONE (socket ")); CC3KPrinter->print(tcp_socket); CC3KPrinter->println(F(")"));
 
@@ -1256,14 +1256,14 @@ Adafruit_CC3000_Client Adafruit_CC3000::connectTCP(uint32_t destIP, uint16_t des
 		CC3KPrinter->println(F("Connection error"));
 	}
     closesocket(tcp_socket);
-    return Adafruit_CC3000_Client();
+    return WildFire_CC3000_Client();
   }
   //if (CC3KPrinter != 0) CC3KPrinter->println(F("DONE"));
-  return Adafruit_CC3000_Client(tcp_socket);
+  return WildFire_CC3000_Client(tcp_socket);
 }
 
 
-Adafruit_CC3000_Client Adafruit_CC3000::connectUDP(uint32_t destIP, uint16_t destPort)
+WildFire_CC3000_Client WildFire_CC3000::connectUDP(uint32_t destIP, uint16_t destPort)
 {
   sockaddr      socketAddress;
   int32_t       udp_socket;
@@ -1278,7 +1278,7 @@ Adafruit_CC3000_Client Adafruit_CC3000::connectUDP(uint32_t destIP, uint16_t des
     CHECK_PRINTER {
 		CC3KPrinter->println(F("Failed to open socket"));
 	}
-    return Adafruit_CC3000_Client();
+    return WildFire_CC3000_Client();
   }
   //if (CC3KPrinter != 0) { CC3KPrinter->print(F("DONE (socket ")); CC3KPrinter->print(udp_socket); CC3KPrinter->println(F(")")); }
 
@@ -1306,25 +1306,25 @@ Adafruit_CC3000_Client Adafruit_CC3000::connectUDP(uint32_t destIP, uint16_t des
 		CC3KPrinter->println(F("Connection error"));
 	}
     closesocket(udp_socket);
-    return Adafruit_CC3000_Client();
+    return WildFire_CC3000_Client();
   }
 
-  return Adafruit_CC3000_Client(udp_socket);
+  return WildFire_CC3000_Client(udp_socket);
 }
 
 
 /**********************************************************************/
-Adafruit_CC3000_Client::Adafruit_CC3000_Client(void) {
+WildFire_CC3000_Client::WildFire_CC3000_Client(void) {
   _socket = -1;
 }
 
-Adafruit_CC3000_Client::Adafruit_CC3000_Client(uint16_t s) {
+WildFire_CC3000_Client::WildFire_CC3000_Client(uint16_t s) {
   _socket = s; 
   bufsiz = 0;
   _rx_buf_idx = 0;
 }
 
-Adafruit_CC3000_Client::Adafruit_CC3000_Client(const Adafruit_CC3000_Client& copy) {
+WildFire_CC3000_Client::WildFire_CC3000_Client(const WildFire_CC3000_Client& copy) {
   // Copy all the members to construct this client.
   _socket = copy._socket;
   bufsiz = copy.bufsiz;
@@ -1332,7 +1332,7 @@ Adafruit_CC3000_Client::Adafruit_CC3000_Client(const Adafruit_CC3000_Client& cop
   memcpy(_rx_buf, copy._rx_buf, RXBUFFERSIZE);
 }
 
-void Adafruit_CC3000_Client::operator=(const Adafruit_CC3000_Client& other) {
+void WildFire_CC3000_Client::operator=(const WildFire_CC3000_Client& other) {
   // Copy all the members to assign a new value to this client.
   _socket = other._socket;
   bufsiz = other.bufsiz;
@@ -1340,7 +1340,7 @@ void Adafruit_CC3000_Client::operator=(const Adafruit_CC3000_Client& other) {
   memcpy(_rx_buf, other._rx_buf, RXBUFFERSIZE);
 }
 
-bool Adafruit_CC3000_Client::connected(void) { 
+bool WildFire_CC3000_Client::connected(void) { 
   if (_socket < 0) return false;
 
   if (! available() && closed_sockets[_socket] == true) {
@@ -1354,13 +1354,13 @@ bool Adafruit_CC3000_Client::connected(void) {
   else return true;  
 }
 
-int16_t Adafruit_CC3000_Client::write(const void *buf, uint16_t len, uint32_t flags)
+int16_t WildFire_CC3000_Client::write(const void *buf, uint16_t len, uint32_t flags)
 {
   return send(_socket, buf, len, flags);
 }
 
 
-size_t Adafruit_CC3000_Client::write(uint8_t c)
+size_t WildFire_CC3000_Client::write(uint8_t c)
 {
   int32_t r;
   r = send(_socket, &c, 1, 0);
@@ -1368,7 +1368,7 @@ size_t Adafruit_CC3000_Client::write(uint8_t c)
   return r;
 }
 
-size_t Adafruit_CC3000_Client::fastrprint(const __FlashStringHelper *ifsh)
+size_t WildFire_CC3000_Client::fastrprint(const __FlashStringHelper *ifsh)
 {
   char _tx_buf[TXBUFFERSIZE];
   uint8_t idx = 0;
@@ -1394,7 +1394,7 @@ size_t Adafruit_CC3000_Client::fastrprint(const __FlashStringHelper *ifsh)
   return n;
 }
 
-size_t Adafruit_CC3000_Client::fastrprintln(const __FlashStringHelper *ifsh)
+size_t WildFire_CC3000_Client::fastrprintln(const __FlashStringHelper *ifsh)
 {
   size_t r = 0;
   r = fastrprint(ifsh);
@@ -1402,7 +1402,7 @@ size_t Adafruit_CC3000_Client::fastrprintln(const __FlashStringHelper *ifsh)
   return r;
 }
 
-size_t Adafruit_CC3000_Client::fastrprintln(const char *str)
+size_t WildFire_CC3000_Client::fastrprintln(const char *str)
 {
   size_t r = 0;
   size_t len = strlen(str);
@@ -1413,7 +1413,7 @@ size_t Adafruit_CC3000_Client::fastrprintln(const char *str)
   return r;
 }
 
-size_t Adafruit_CC3000_Client::fastrprint(const char *str)
+size_t WildFire_CC3000_Client::fastrprint(const char *str)
 {
   size_t len = strlen(str);
   if (len > 0) {
@@ -1424,19 +1424,19 @@ size_t Adafruit_CC3000_Client::fastrprint(const char *str)
   }
 }
 
-int16_t Adafruit_CC3000_Client::read(void *buf, uint16_t len, uint32_t flags) 
+int16_t WildFire_CC3000_Client::read(void *buf, uint16_t len, uint32_t flags) 
 {
   return recv(_socket, buf, len, flags);
 
 }
 
-int32_t Adafruit_CC3000_Client::close(void) {
+int32_t WildFire_CC3000_Client::close(void) {
   int32_t x = closesocket(_socket);
   _socket = -1;
   return x;
 }
 
-uint8_t Adafruit_CC3000_Client::read(void) 
+uint8_t WildFire_CC3000_Client::read(void) 
 {
   while ((bufsiz <= 0) || (bufsiz == _rx_buf_idx)) {
     cc3k_int_poll();
@@ -1455,7 +1455,7 @@ uint8_t Adafruit_CC3000_Client::read(void)
   return ret;
 }
 
-uint8_t Adafruit_CC3000_Client::available(void) {
+uint8_t WildFire_CC3000_Client::available(void) {
   // not open!
   if (_socket < 0) return 0;
 
@@ -1480,6 +1480,6 @@ uint8_t Adafruit_CC3000_Client::available(void) {
   else return 0;  // no data is available
 }
 
-void Adafruit_CC3000::setPrinter(Print* p) {
+void WildFire_CC3000::setPrinter(Print* p) {
   CC3KPrinter = p;
 }

@@ -27,15 +27,15 @@ module.
 
 */
 
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <string.h>
 #include "utility/debug.h"
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 #define WLAN_SSID       "myNetwork"        // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"
@@ -123,18 +123,18 @@ void setup(void)
   }
   
 #ifndef CC3000_TINY_DRIVER
-  /* Try looking up www.adafruit.com */
+  /* Try looking up www.wickeddevice.com */
   uint32_t ip = 0;
-  Serial.print(F("www.adafruit.com -> "));
+  Serial.print(F("www.wickeddevice.com -> "));
   while  (ip  ==  0)  {
-    if  (!  cc3000.getHostByName("www.adafruit.com", &ip))  {
+    if  (!  cc3000.getHostByName("www.wickeddevice.com", &ip))  {
       Serial.println(F("Couldn't resolve!"));
     }
     delay(500);
   }  
   cc3000.printIPdotsRev(ip);
   
-  /* Do a quick ping test on adafruit.com */  
+  /* Do a quick ping test on wickeddevice.com */  
   Serial.print(F("\n\rPinging ")); cc3000.printIPdotsRev(ip); Serial.print("...");  
   uint8_t replies = cc3000.ping(ip, 5);
   Serial.print(replies); Serial.println(F(" replies"));

@@ -24,7 +24,7 @@ This example does a test of the SNTP (Simple Network Time Protocol) client:
  
 */
 
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 //#include "utility/NetTime.h"
@@ -32,9 +32,9 @@ This example does a test of the SNTP (Simple Network Time Protocol) client:
 #include "utility/debug.h"
 #include "utility/sntp.h"
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 #define WLAN_SSID       "myNetwork"   // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"

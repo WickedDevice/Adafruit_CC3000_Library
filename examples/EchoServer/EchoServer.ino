@@ -70,14 +70,14 @@
   Written by Limor Fried & Kevin Townsend for Adafruit Industries.  
   BSD license, all text above must be included in any redistribution      
  ****************************************************/
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <SPI.h>
 #include "utility/debug.h"
 #include "utility/socket.h"
 #include <WildFire.h>
-WildFire wf;
+WildFire wf(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000;
+WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 #define WLAN_SSID       "myNetwork"           // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"
@@ -86,7 +86,7 @@ Adafruit_CC3000 cc3000;
 
 #define LISTEN_PORT           7    // What TCP port to listen on for connections.  The echo protocol uses port 7.
 
-Adafruit_CC3000_Server echoServer(LISTEN_PORT);
+WildFire_CC3000_Server echoServer(LISTEN_PORT);
 
 void setup(void)
 {
@@ -142,7 +142,7 @@ void setup(void)
 void loop(void)
 {
   // Try to get a client which is connected.
-  Adafruit_CC3000_ClientRef client = echoServer.available();
+  WildFire_CC3000_ClientRef client = echoServer.available();
   if (client) {
      // Check if there is data available to read.
      if (client.available() > 0) {

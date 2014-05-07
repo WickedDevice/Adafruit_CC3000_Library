@@ -17,8 +17,8 @@
 */
 /**************************************************************************/
 
-#ifndef ADAFRUIT_CC3000_H
-#define ADAFRUIT_CC3000_H
+#ifndef WILDFIRE_CC3000_H
+#define WILDFIRE_CC3000_H
 
 #if ARDUINO >= 100
  #include "Arduino.h"
@@ -73,17 +73,17 @@ typedef enum
   STATUS_CONNECTED    = 3
 } status_t;
 
-class Adafruit_CC3000;
+class WildFire_CC3000;
 
-class Adafruit_CC3000_Client : public Print {
+class WildFire_CC3000_Client : public Print {
  public:
-  Adafruit_CC3000_Client(uint16_t s);
-  Adafruit_CC3000_Client(void);
-  Adafruit_CC3000_Client(const Adafruit_CC3000_Client& copy);
-  void operator=(const Adafruit_CC3000_Client& other);
+  WildFire_CC3000_Client(uint16_t s);
+  WildFire_CC3000_Client(void);
+  WildFire_CC3000_Client(const WildFire_CC3000_Client& copy);
+  void operator=(const WildFire_CC3000_Client& other);
   
   // NOTE: If public functions below are added/modified/removed please make sure to update the 
-  // Adafruit_CC3000_ClientRef class to match!
+  // WildFire_CC3000_ClientRef class to match!
 
   bool connected(void);
   size_t write(uint8_t c);
@@ -111,14 +111,14 @@ class Adafruit_CC3000_Client : public Print {
 // A forward reference in the server header won't cut it because the server needs to contain
 // instances of the client.  The client definition above can be pulled into a separate
 // header in a later change to make this cleaner.
-#include "Adafruit_CC3000_Server.h"
+#include "WildFire_CC3000_Server.h"
 
 #define WILDFIRE_V2 (2)
 #define WILDFIRE_V3 (3)
 
-class Adafruit_CC3000 {
+class WildFire_CC3000 {
   public:
-  Adafruit_CC3000(uint8_t wildfire_board_version);
+  WildFire_CC3000(uint8_t wildfire_board_version);
     bool     begin(uint8_t patchReq = 0, bool useSmartConfigData = false);
     void     reboot(uint8_t patchReq = 0);
     void     stop(void);
@@ -141,8 +141,8 @@ class Adafruit_CC3000 {
 
     bool     checkSmartConfigFinished(void);
 
-    Adafruit_CC3000_Client connectTCP(uint32_t destIP, uint16_t destPort);
-    Adafruit_CC3000_Client connectUDP(uint32_t destIP, uint16_t destPort);
+    WildFire_CC3000_Client connectTCP(uint32_t destIP, uint16_t destPort);
+    WildFire_CC3000_Client connectUDP(uint32_t destIP, uint16_t destPort);
      
     #ifndef CC3000_TINY_DRIVER
     bool     getFirmwareVersion(uint8_t *major, uint8_t *minor);
