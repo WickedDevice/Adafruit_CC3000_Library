@@ -113,9 +113,12 @@ class Adafruit_CC3000_Client : public Print {
 // header in a later change to make this cleaner.
 #include "Adafruit_CC3000_Server.h"
 
+#define WILDFIRE_V2 (2)
+#define WILDFIRE_V3 (3)
+
 class Adafruit_CC3000 {
   public:
-  Adafruit_CC3000(uint8_t spispeed = SPI_CLOCK_DIVIDER);
+  Adafruit_CC3000(uint8_t wildfire_board_version);
     bool     begin(uint8_t patchReq = 0, bool useSmartConfigData = false);
     void     reboot(uint8_t patchReq = 0);
     void     stop(void);

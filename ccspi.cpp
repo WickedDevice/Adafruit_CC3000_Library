@@ -48,7 +48,7 @@
 #include "utility/cc3000_common.h"
 #include "utility/debug.h"
 
-extern uint8_t g_IRQnum, g_SPIspeed;
+extern uint8_t g_csPin, g_irqPin, g_vbatPin, g_IRQnum, g_SPIspeed;
 
 #define READ                            (3)
 #define WRITE                           (1)
@@ -110,11 +110,11 @@ uint8_t ccspi_mySPICTRL, ccspi_oldSPICTRL;
 
 // CC3000 chip select + SPI config
 #define CC3000_ASSERT_CS {     \
-  PORTB &= ~_BV(4); \
+  digitalWrite(g_csPin, LOW);  \
   SpiConfigPush(); }
 // CC3000 chip deselect + SPI restore
 #define CC3000_DEASSERT_CS {   \
-  PORTB |= _BV(4); \
+  digitalWrite(g_csPin, HIGH); \
   SpiConfigPop(); }
 
 
@@ -228,16 +228,20 @@ int init_spi(void)
   DEBUGPRINT_F("\tCC3000: init_spi\n\r");
   
   /* Set POWER_EN pin to output and disable the CC3000 by default */
-  DDRB |= _BV(3);   // pinMode(g_vbatPin, OUTPUT);
-  PORTB &= ~_BV(3); // digitalWrite(g_vbatPin, 0);
+  pinMode(g_vbatPin, OUTPUT);
+  digitalWrite(g_vbatPin, 0);
   delay(500);
 
   /* Set CS pin to output (don't de-assert yet) */
-  DDRB |= _BV(4);  // pinMode(g_csPin, OUTPUT);
-  PORTB |= _BV(4); // drive it high
-  
+  pinMode(g_csPin, OUTPUT);
+
   /* Set interrupt/gpio pin to input */
-  PORTB |= _BV(2); // digitalWrite(g_irqPin, HIGH); // w/weak pullup
+#if defined(INPUT_PULLUP)
+  pinMode(g_irqPin, INPUT_PULLUP);
+#else
+  pinMode(g_irqPin, INPUT);
+  digitalWrite(g_irqPin, HIGH); // w/weak pullup
+#endif
 
   SpiConfigStoreOld(); // prime ccspi_old* values for DEASSERT
 
@@ -582,11 +586,11 @@ void WriteWlanPin( unsigned char val )
   }
   if (val)
   {
-    PORTB |= _BV(3);  // digitalWrite(g_vbatPin, HIGH);
+    digitalWrite(g_vbatPin, HIGH);
   }
   else
   {
-    PORTB &= ~_BV(3); // digitalWrite(g_vbatPin, LOW);
+    digitalWrite(g_vbatPin, LOW);
   }
 }
 
@@ -598,10 +602,10 @@ void WriteWlanPin( unsigned char val )
 long ReadWlanInterruptPin(void)
 {
   DEBUGPRINT_F("\tCC3000: ReadWlanInterruptPin - ");
-  DEBUGPRINT_DEC((PINB & _BV(2)) >> 2); //DEBUGPRINT_DEC(digitalRead(g_irqPin));
+  DEBUGPRINT_DEC(digitalRead(g_irqPin));
   DEBUGPRINT_F("\n\r");
 
-  return ((PINB & _BV(2)) >> 2); // return(digitalRead(g_irqPin));
+  return(digitalRead(g_irqPin));
 }
 
 /**************************************************************************/
@@ -737,8 +741,7 @@ void SPI_IRQ(void)
 
 void cc3k_int_poll()
 {
-  //if (digitalRead(g_irqPin) == LOW && ccspi_is_in_irq == 0 && ccspi_int_enabled != 0) {
-  if ((PINB & _BV(2)) == 0 && ccspi_is_in_irq == 0 && ccspi_int_enabled != 0) {
+  if (digitalRead(g_irqPin) == LOW && ccspi_is_in_irq == 0 && ccspi_int_enabled != 0) {
     SPI_IRQ();
   }
 }

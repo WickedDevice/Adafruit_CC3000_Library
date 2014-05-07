@@ -23,6 +23,7 @@
 #include "Adafruit_CC3000.h"
 #include "ccspi.h"
 
+#include <avr/wdt.h>
 #include "utility/cc3000_common.h"
 #include "utility/evnt_handler.h"
 #include "utility/hci.h"
@@ -33,8 +34,8 @@
 #include "utility/wlan.h"
 #include "utility/debug.h"
 #include "utility/sntp.h"
-#include <avr/wdt.h>
-uint8_t g_IRQnum, g_SPIspeed;
+
+uint8_t g_csPin, g_irqPin, g_vbatPin, g_IRQnum, g_SPIspeed;
 
 /*
 static const uint8_t dreqinttable[] = {
@@ -208,12 +209,25 @@ bool Adafruit_CC3000::scanSSIDs(uint32_t time)
     @brief  Instantiates a new CC3000 class
 */
 /**************************************************************************/
-Adafruit_CC3000::Adafruit_CC3000(uint8_t SPIspeed)
+Adafruit_CC3000::Adafruit_CC3000(uint8_t wildfire_board_version)
 {
   _initialised = false;
-  g_IRQnum = 0xFF;
-  g_SPIspeed = SPIspeed;
-
+  
+  if(wildfire_board_version == WILDFIRE_V2){
+    g_IRQnum = 2;
+    g_SPIspeed = SPI_CLOCK_DIVIDER;
+    g_csPin = 10;
+    g_irqPin = 8;
+    g_vbatPin = 9;
+  }
+  else if(wildfire_board_version == WILDFIRE_V3){
+    g_IRQnum = 2;
+    g_SPIspeed = SPI_CLOCK_DIVIDER;
+    g_csPin = 21;
+    g_irqPin = 22;
+    g_vbatPin = 23;    
+  }
+  
   cc3000Bitset.clear();
 
   #if defined(UDR0) || defined(UDR1) || defined(CORE_TEENSY) || ( defined (__arm__) && defined (__SAM3X8E__) )
@@ -249,9 +263,7 @@ Adafruit_CC3000::Adafruit_CC3000(uint8_t SPIspeed)
 bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
 {
   if (_initialised) return true;
-  
-  g_IRQnum = 2;
-
+ 
   init_spi();
   
   DEBUGPRINT_F("init\n\r");
