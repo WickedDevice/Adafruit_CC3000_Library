@@ -46,6 +46,8 @@
 #include <WildFire.h>
 WildFire wf(WILDFIRE_V3);
 
+#define DEVICE_NAME "CC3000"
+
 WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 // The SSID & Password are retrieved via the Smartconfig app
@@ -59,7 +61,7 @@ WildFire_CC3000 cc3000(WILDFIRE_V3);
 void setup(void)
 {
   wf.begin();
-
+  
   Serial.begin(115200);
   Serial.println(F("Hello, CC3000!\n"));
 

@@ -51,8 +51,6 @@ WildFire wf(WILDFIRE_V3);
 
 #define DEVICE_NAME "CC3000"
 
-// Use hardware SPI for the remaining pins
-// On an UNO, SCK = 13, MISO = 12, and MOSI = 11
 WildFire_CC3000 cc3000(WILDFIRE_V3);
 
 // We get the SSID & Password from memory thanks to SmartConfigCreate!
@@ -66,7 +64,6 @@ WildFire_CC3000 cc3000(WILDFIRE_V3);
 void setup(void)
 {
   wf.begin();
-
   Serial.begin(115200);
   Serial.println(F("Hello, CC3000!\n")); 
 
