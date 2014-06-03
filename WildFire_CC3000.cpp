@@ -584,6 +584,61 @@ bool WildFire_CC3000::setMacAddress(uint8_t address[6])
 
 /**************************************************************************/
 /*!
+    @brief    Set the CC3000 to use a static IP address when it's connected
+              to the network.  Use the cc3000.IP2U32 function to specify the
+              IP, subnet mask (typically 255.255.255.0), default gateway
+              (typically 192.168.1.1), and DNS server (can use Google's DNS
+              of 8.8.8.8 or 8.8.4.4).  Note that the static IP configuration
+              will be saved in the CC3000's non-volatile storage and reused
+              on next reconnect.  This means you only need to call this once
+              and the CC3000 will remember the setting forever.  To revert
+              back to use DHCP, call the cc3000.setDHCP function.
+
+    @param    ip               IP address
+    @param    subnetmask       Subnet mask
+    @param    defaultGateway   Default gateway
+    @param    dnsServer        DNS server
+
+    @returns  False if an error occurred, true if successfully set.
+*/
+/**************************************************************************/
+bool Adafruit_CC3000::setStaticIPAddress(uint32_t ip, uint32_t subnetMask, uint32_t defaultGateway, uint32_t dnsServer)
+{
+  // Reverse order of bytes in parameters so IP2U32 packed values can be used with the netapp_dhcp function.
+  ip = (ip >> 24) | ((ip >> 8) & 0x0000FF00L) | ((ip << 8) & 0x00FF0000L) | (ip << 24);
+  subnetMask = (subnetMask >> 24) | ((subnetMask >> 8) & 0x0000FF00L) | ((subnetMask << 8) & 0x00FF0000L) | (subnetMask << 24);
+  defaultGateway = (defaultGateway >> 24) | ((defaultGateway >> 8) & 0x0000FF00L) | ((defaultGateway << 8) & 0x00FF0000L) | (defaultGateway << 24);
+  dnsServer = (dnsServer >> 24) | ((dnsServer >> 8) & 0x0000FF00L) | ((dnsServer << 8) & 0x00FF0000L) | (dnsServer << 24);
+  // Update DHCP state with specified values.
+  if (netapp_dhcp(&ip, &subnetMask, &defaultGateway, &dnsServer) != 0) {
+    return false;
+  }
+  // Reset CC3000 to use modified setting.
+  wlan_stop();
+  delay(200);
+  wlan_start(0);
+  return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief    Set the CC3000 to use request an IP and network configuration
+              using DHCP.  Note that this DHCP state will be saved in the 
+              CC3000's non-volatile storage and reused on next reconnect.
+              This means you only need to call this once and the CC3000 will 
+              remember the setting forever.  To switch to use a static IP,
+              call the cc3000.setStaticIPAddress function.
+
+    @returns  False if an error occurred, true if successfully set.
+*/
+/**************************************************************************/
+bool Adafruit_CC3000::setDHCP()
+{
+  return setStaticIPAddress(0,0,0,0);
+}
+
+/**************************************************************************/
+/*!
     @brief   Reads the current IP address
 
     @returns  False if an error occured!
@@ -1395,7 +1450,7 @@ size_t WildFire_CC3000_Client::fastrprintln(const __FlashStringHelper *ifsh)
 {
   size_t r = 0;
   r = fastrprint(ifsh);
-  r+= fastrprint(F("\n\r"));
+  r+= fastrprint(F("\r\n"));
   return r;
 }
 
@@ -1406,7 +1461,7 @@ size_t WildFire_CC3000_Client::fastrprintln(const char *str)
   if (len > 0) {
     if ((r = write(str, len, 0)) <= 0) return 0;
   }
-  if ((r += write("\n\r", 2, 0)) <= 0) return 0;  // meme fix
+  if ((r += write("\r\n", 2, 0)) <= 0) return 0;  // meme fix
   return r;
 }
 

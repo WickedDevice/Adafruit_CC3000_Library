@@ -146,7 +146,7 @@ void setup(void)
     while(1);
   }
   
-  displayFirmwareVersion();
+  //displayFirmwareVersion();
   displayMACAddress();
   
   return_status = 1;
@@ -265,11 +265,14 @@ void setup(void)
 
   Serial.println(F("Starting w/patches"));
 
-  if (!cc3000.begin())
+  cc3000.reboot();
+  /*
+  if (!)
   {
     Serial.println(F("Unable to initialise the CC3000! Check your wiring?"));
     while(1);
   }
+  */
   Serial.println(F("Patched!"));
   displayFirmwareVersion();
   displayMACAddress();
@@ -333,4 +336,3 @@ void loop(void)
 {
   delay(1000);
 }
-
