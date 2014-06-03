@@ -16,9 +16,9 @@
 #include "utility/nvmem.h"
 #include "driverpatchinc.h"
 #include <WildFire.h>
-WildFire wf(WILDFIRE_V3);
+WildFire wf;
 
-WildFire_CC3000 cc3000(WILDFIRE_V3);
+WildFire_CC3000 cc3000;
 
 /**************************************************************************/
 /*!

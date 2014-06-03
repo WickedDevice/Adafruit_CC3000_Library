@@ -83,7 +83,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <SPI.h>
 #include <sha1.h>
 #include <WildFire.h>
-WildFire wf(WILDFIRE_V3);
+WildFire wf;
 
 // --------------------------------------------------------------------------
 // This is a relatively complex sketch, not recommended as a first
@@ -95,7 +95,7 @@ WildFire wf(WILDFIRE_V3);
 
 // Configurable globals and defines.  Edit to your needs. -------------------
 
-WildFire_CC3000 cc3000(WILDFIRE_V3);
+WildFire_CC3000 cc3000;
 
 // WiFi access point credentials
 #define WLAN_SSID     "myNetwork"  // 32 characters max

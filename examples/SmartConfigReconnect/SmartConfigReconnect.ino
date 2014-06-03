@@ -47,11 +47,11 @@
 #include <string.h>
 #include "utility/debug.h"
 #include <WildFire.h>
-WildFire wf(WILDFIRE_V3);
+WildFire wf;
 
 #define DEVICE_NAME "CC3000"
 
-WildFire_CC3000 cc3000(WILDFIRE_V3);
+WildFire_CC3000 cc3000;
 
 // We get the SSID & Password from memory thanks to SmartConfigCreate!
 

@@ -33,9 +33,9 @@ module.
 #include <string.h>
 #include "utility/debug.h"
 #include <WildFire.h>
-WildFire wf(WILDFIRE_V3);
+WildFire wf;
 
-WildFire_CC3000 cc3000(WILDFIRE_V3);
+WildFire_CC3000 cc3000;
 
 #define WLAN_SSID       "myNetwork"        // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"

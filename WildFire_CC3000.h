@@ -113,12 +113,9 @@ class WildFire_CC3000_Client : public Print {
 // header in a later change to make this cleaner.
 #include "WildFire_CC3000_Server.h"
 
-#define WILDFIRE_V2 (2)
-#define WILDFIRE_V3 (3)
-
 class WildFire_CC3000 {
   public:
-  WildFire_CC3000(uint8_t wildfire_board_version);
+  WildFire_CC3000();
     bool     begin(uint8_t patchReq = 0, bool useSmartConfigData = false, const char *_deviceName = NULL);
     void     reboot(uint8_t patchReq = 0);
     void     stop(void);
