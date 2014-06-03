@@ -13,15 +13,15 @@
   BSD license, all text above must be included in any redistribution
  ****************************************************/
  
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <string.h>
 #include "utility/debug.h"
 #include <WildFire.h>
-WildFire wildfire;
+WildFire wildfire(WILDFIRE_V3);
 
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(SPI_CLOCK_DIV2); // you can change this clock speed
+WildFire_CC3000 cc3000 = WildFire_CC3000(WILDFIRE_V3); // you can change this clock speed
 
 #define WLAN_SSID       "myNetwork"           // cannot be longer than 32 characters!
 #define WLAN_PASS       "myPassword"
@@ -74,13 +74,13 @@ const uint16_t  SERVER_PORT    = 9000;
 void runTest(void) {
   // Make two connections to the server running listener.py
   Serial.println(F("Connecting to server..."));
-  Adafruit_CC3000_Client client1 = cc3000.connectTCP(cc3000.IP2U32(SERVER_IP[0], SERVER_IP[1], SERVER_IP[2], SERVER_IP[3]), 
+  WildFire_CC3000_Client client1 = cc3000.connectTCP(cc3000.IP2U32(SERVER_IP[0], SERVER_IP[1], SERVER_IP[2], SERVER_IP[3]), 
                                                      SERVER_PORT);
   if (!client1.connected()) {
     Serial.println(F("Couldn't connect to server! Make sure listener.py is running on the server."));
     while(1);
   }
-  Adafruit_CC3000_Client client2 = cc3000.connectTCP(cc3000.IP2U32(SERVER_IP[0], SERVER_IP[1], SERVER_IP[2], SERVER_IP[3]), 
+  WildFire_CC3000_Client client2 = cc3000.connectTCP(cc3000.IP2U32(SERVER_IP[0], SERVER_IP[1], SERVER_IP[2], SERVER_IP[3]), 
                                                      SERVER_PORT);
   if (!client2.connected()) {
     Serial.println(F("Couldn't connect to server! Make sure listener.py is running on the server."));
