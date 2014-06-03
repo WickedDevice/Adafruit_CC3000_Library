@@ -602,7 +602,7 @@ bool WildFire_CC3000::setMacAddress(uint8_t address[6])
     @returns  False if an error occurred, true if successfully set.
 */
 /**************************************************************************/
-bool Adafruit_CC3000::setStaticIPAddress(uint32_t ip, uint32_t subnetMask, uint32_t defaultGateway, uint32_t dnsServer)
+bool WildFire_CC3000::setStaticIPAddress(uint32_t ip, uint32_t subnetMask, uint32_t defaultGateway, uint32_t dnsServer)
 {
   // Reverse order of bytes in parameters so IP2U32 packed values can be used with the netapp_dhcp function.
   ip = (ip >> 24) | ((ip >> 8) & 0x0000FF00L) | ((ip << 8) & 0x00FF0000L) | (ip << 24);
@@ -632,7 +632,7 @@ bool Adafruit_CC3000::setStaticIPAddress(uint32_t ip, uint32_t subnetMask, uint3
     @returns  False if an error occurred, true if successfully set.
 */
 /**************************************************************************/
-bool Adafruit_CC3000::setDHCP()
+bool WildFire_CC3000::setDHCP()
 {
   return setStaticIPAddress(0,0,0,0);
 }
