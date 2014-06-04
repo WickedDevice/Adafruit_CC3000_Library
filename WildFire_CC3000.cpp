@@ -828,6 +828,7 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   // CC3KPrinter->println("Disconnecting");
   // Wait until CC3000 is disconnected
   while (cc3000Bitset.test(CC3000BitSet::IsConnected)) {
+    wdt_reset();
     cc3k_int_poll();
     CHECK_SUCCESS(wlan_disconnect(),
                   "Failed to disconnect from AP", false);
@@ -863,6 +864,7 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   // Wait for smart config process complete (event in CC3000_UsynchCallback)
   while (!cc3000Bitset.test(CC3000BitSet::IsSmartConfigFinished))
   {
+    wdt_reset();
     cc3k_int_poll();
     // waiting here for event SIMPLE_CONFIG_DONE
     timeout+=10;
@@ -911,6 +913,7 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   timeout = 0;
   while(!cc3000Bitset.test(CC3000BitSet::IsConnected))
   {
+    wdt_reset();    
     cc3k_int_poll();
     if(timeout > WLAN_CONNECT_TIMEOUT) // ~20s
     {
