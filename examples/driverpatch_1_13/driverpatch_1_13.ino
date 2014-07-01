@@ -31,21 +31,19 @@
 //     example.  Make sure to save your MAC address before upgrading the firmware
 //     if you'd like to keep it the same after
 
-#include <Adafruit_CC3000.h>
+#include <WildFire_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
 #include <string.h>
 #include <EEPROM.h>
+#include <WildFire.h>
 
 #include "utility/debug.h"
 #include "utility/nvmem.h"
 #include "driverpatchinc_1_13.h"
 
-#define ADAFRUIT_CC3000_IRQ   3  // MUST be an interrupt pin!
-#define ADAFRUIT_CC3000_CS    10
-#define ADAFRUIT_CC3000_VBAT  5
-
-Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT);
+WildFire_CC3000 cc3000;
+WildFire wf;
 
 /**************************************************************************/
 /*!
@@ -154,20 +152,12 @@ uint16_t aFATEntries[2][NVMEM_RM_FILEID + 1] =
 
 void setup(void)
 {
+  wf.begin();
   Serial.begin(115200);
   Serial.println(F("Hello, CC3000!\n")); 
 
   Serial.println(F("Hit any key & return to start"));
   while (!Serial.available());
- 
-  pinMode(9, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(6, OUTPUT);
-  digitalWrite(9, LOW);
-  digitalWrite(8, LOW);
-  digitalWrite(7, LOW);
-  digitalWrite(6, LOW);
   
   displayDriverMode();
   displayFreeRam();
@@ -299,11 +289,14 @@ void setup(void)
 
   Serial.println(F("Starting w/patches"));
 
-  if (!cc3000.begin(0))
+  cc3000.reboot();
+  /*
+  if (!)
   {
     Serial.println(F("Unable to initialise the CC3000! Check your wiring?"));
     while(1);
   }
+  */
   Serial.println(F("Patched!"));
   displayFirmwareVersion();
   displayMACAddress();
