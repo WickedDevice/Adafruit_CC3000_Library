@@ -7,7 +7,7 @@
 //   http://processors.wiki.ti.com/index.php/CC3000_Release_Notes
 //
 // In general the 1.13 release is a bug fix release with fixes for stability
-// issues that caused the CC3000 to hand when under load.
+// issues that caused the CC3000 to hang when under load.
 //
 // WARNING: Upgrade firmware at your own risk!  In general if the CC3000 is 
 // currently working fine for your needs then hold off on the upgrade.
