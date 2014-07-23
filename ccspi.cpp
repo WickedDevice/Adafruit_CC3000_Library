@@ -108,6 +108,16 @@ uint8_t ccspi_mySPICTRL, ccspi_oldSPICTRL;
 #define SpiConfigPop()			do {  } while (0)
 #endif
 
+#ifdef SPI_HAS_TRANSACTION
+// SPI begin transaction + CC3000 chip select
+#define CC3000_ASSERT_CS {     \
+  SPI.beginTransaction(SPISettings(16000000, MSBFIRST, SPI_MODE1)); \
+  digitalWrite(g_csPin, LOW); }
+// CC3000 chip deselect + SPI end transaction
+#define CC3000_DEASSERT_CS {   \
+  digitalWrite(g_csPin, HIGH); \
+  SPI.endTransaction(); }
+#else
 // CC3000 chip select + SPI config
 #define CC3000_ASSERT_CS {     \
   digitalWrite(g_csPin, LOW);  \
@@ -116,6 +126,7 @@ uint8_t ccspi_mySPICTRL, ccspi_oldSPICTRL;
 #define CC3000_DEASSERT_CS {   \
   digitalWrite(g_csPin, HIGH); \
   SpiConfigPop(); }
+#endif
 
 
 /* smartconfig flags (defined in Adafruit_CC3000.cpp) */
@@ -247,6 +258,10 @@ int init_spi(void)
 
   /* Initialise SPI (Mode 1) */
   SPI.begin();
+#ifdef SPI_HAS_TRANSACTION
+  SPI.usingInterrupt(g_IRQnum);
+  digitalWrite(g_csPin, HIGH);  // CC3000_DEASSERT_CS
+#else
   SPI.setDataMode(SPI_MODE1);
   SPI.setBitOrder(MSBFIRST);
   SPI.setClockDivider(g_SPIspeed);
@@ -257,6 +272,7 @@ int init_spi(void)
   // to.  Invoke DEASSERT (which also restores SPI registers) so the next
   // ASSERT call won't clobber the ccspi_old* values -- we need those!
   CC3000_DEASSERT_CS;
+#endif
 
   /* ToDo: Configure IRQ interrupt! */
 
@@ -365,6 +381,9 @@ long SpiWrite(unsigned char *pUserBuffer, unsigned short usLength)
       sSpiInformation.ulSpiState = eSPI_STATE_IDLE;
 
       CC3000_DEASSERT_CS;
+#ifdef SPI_HAS_TRANSACTION
+       WlanInterruptEnable();
+#endif
     }
   }
 
