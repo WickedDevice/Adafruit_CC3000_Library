@@ -2,22 +2,22 @@
 /*!
   @file     WildFire_CC3000.cpp
   @author   KTOWN (Kevin Townsend for Adafruit Industries)
-	@license  BSD (see license.txt)
+  @license  BSD (see license.txt)
 
-	This is a library for the Adafruit CC3000 WiFi breakout board
-	This library works with the Adafruit CC3000 breakout
-	----> https://www.adafruit.com/products/1469
+  This is a library for the Adafruit CC3000 WiFi breakout board
+  This library works with the Adafruit CC3000 breakout
+  ----> https://www.adafruit.com/products/1469
 
-	Check out the links above for our tutorials and wiring diagrams
-	These chips use SPI to communicate.
+  Check out the links above for our tutorials and wiring diagrams
+  These chips use SPI to communicate.
 
-	Adafruit invests time and resources providing this open source code,
-	please support Adafruit and open-source hardware by purchasing
-	products from Adafruit!
+  Adafruit invests time and resources providing this open source code,
+  please support Adafruit and open-source hardware by purchasing
+  products from Adafruit!
 
-	@section  HISTORY
+  @section  HISTORY
 
-	v1.0    - Initial release
+  v1.0    - Initial release
 */
 /**************************************************************************/
 #include "WildFire_CC3000.h"
@@ -105,8 +105,8 @@ netapp_pingreport_args_t pingReport;
 #define CC3000_SUCCESS                        (0)
 #define CHECK_SUCCESS(func,Notify,errorCode)  {if ((func) != CC3000_SUCCESS) { CHECK_PRINTER CC3KPrinter->println(F(Notify)); return errorCode;}}
 
-#define MAXSSID					  (32)
-#define MAXLENGTHKEY 			(32)  /* Cleared for 32 bytes by TI engineering 29/08/13 */
+#define MAXSSID           (32)
+#define MAXLENGTHKEY      (32)  /* Cleared for 32 bytes by TI engineering 29/08/13 */
 
 #define MAX_SOCKETS 32  // can change this
 boolean closed_sockets[MAX_SOCKETS] = {false, false, false, false};
@@ -140,7 +140,7 @@ public:
     flags &= ~flag;
   }
 private:
-	volatile byte flags;
+  volatile byte flags;
 }cc3000Bitset;
 
 volatile long ulSocket;
@@ -200,10 +200,13 @@ bool WildFire_CC3000::scanSSIDs(uint32_t time)
 
 /**************************************************************************/
 /*!
-    @brief  Instantiates a new CC3000 class
+    @brief  Instantiates a new CC3000 class.
+            Note that by default this class will assume the first hardware 
+            serial should be used for debug output.  This behavior can be
+            changed by explicitly specifying a cc3kPrinter parameter.
 */
 /**************************************************************************/
-WildFire_CC3000::WildFire_CC3000()
+WildFire_CC3000::WildFire_CC3000(Print* cc3kPrinter)
 {
   _initialised = false;
   
@@ -223,14 +226,7 @@ WildFire_CC3000::WildFire_CC3000()
   
   cc3000Bitset.clear();
 
-  #if defined(UDR0) || defined(UDR1) || defined(CORE_TEENSY) || ( defined (__arm__) && defined (__SAM3X8E__) )
-  CC3KPrinter = &Serial;
-  #else
-  CC3KPrinter = 0;
-  // no default serial port found
-  #endif
-  
-  //CC3KPrinter = 0;  
+  CC3KPrinter = cc3kPrinter;
 }
 
 /* *********************************************************************** */
@@ -750,9 +746,8 @@ status_t WildFire_CC3000::getStatus()
 ResultStruct_t SSIDScanResultBuff;
 
 
-uint16_t WildFire_CC3000::startSSIDscan() {
-  uint16_t   index = 0;
 
+bool WildFire_CC3000::startSSIDscan(uint32_t *index) {
   if (!_initialised)
   {
     return false;
@@ -771,8 +766,8 @@ uint16_t WildFire_CC3000::startSSIDscan() {
   CHECK_SUCCESS(wlan_ioctl_get_scan_results(0, (uint8_t* ) &SSIDScanResultBuff),
                 "SSID scan failed!", false);
 
-  index = SSIDScanResultBuff.num_networks;
-  return index;
+  *index = SSIDScanResultBuff.num_networks;
+  return true;
 }
 
 void WildFire_CC3000::stopSSIDscan(void) {
@@ -877,7 +872,7 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   }
 
   CHECK_PRINTER {
-	CC3KPrinter->println(F("Got smart config data"));
+    CC3KPrinter->println(F("Got smart config data"));
   }
   if (enableAES) {
     CHECK_SUCCESS(wlan_smart_config_process(),
@@ -942,7 +937,6 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
     Connect to an unsecured SSID/AP(security)
 
     @param  ssid      The named of the AP to connect to (max 32 chars)
-    @param  ssidLen   The size of the ssid name
 
     @returns  False if an error occured!
 */
@@ -958,11 +952,11 @@ bool WildFire_CC3000::connectOpen(const char *ssid)
                  "Failed to set connection policy", false);
     delay(500);
     CHECK_SUCCESS(wlan_connect(WLAN_SEC_UNSEC,
-					(const char*)ssid, strlen(ssid),
-					0 ,NULL,0),
-					"SSID connection failed", false);
+          (const char*)ssid, strlen(ssid),
+          0 ,NULL,0),
+          "SSID connection failed", false);
   #else
-    wlan_connect(ssid, ssidLen);
+    wlan_connect(ssid, strlen(ssid));
   #endif
 
   return true;
@@ -996,7 +990,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
 
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DISCONNECT)
   {
-	cc3000Bitset.reset(CC3000BitSet::IsConnected | CC3000BitSet::HasDHCP);
+    cc3000Bitset.reset(CC3000BitSet::IsConnected | CC3000BitSet::HasDHCP);
   }
   
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DHCP)
@@ -1044,8 +1038,8 @@ bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t s
   
   if ( (secMode < 0) || (secMode > 3)) {
     CHECK_PRINTER {
-		CC3KPrinter->println(F("Security mode must be between 0 and 3"));
-	}
+      CC3KPrinter->println(F("Security mode must be between 0 and 3"));
+    }
     return false;
   }
 
@@ -1126,8 +1120,8 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
       wdt_reset();      
       if (! connectOpen(ssid)) {
         CHECK_PRINTER {
-			    CC3KPrinter->println(F("Failed!"));
-		    }
+          CC3KPrinter->println(F("Failed!"));
+        }
         continue;
       }
     } else {
@@ -1137,19 +1131,19 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
       wdt_reset();      
       if (! connectSecure(ssid, key, secmode)) {
         CHECK_PRINTER {
-			    CC3KPrinter->println(F("Failed!"));
-		    }
+          CC3KPrinter->println(F("Failed!"));
+        }
         continue;
       }
 #endif
     }
-	  
+    
     timer = WLAN_CONNECT_TIMEOUT;
 
     /* Wait around a bit for the async connected signal to arrive or timeout */
     CHECK_PRINTER {
-		  CC3KPrinter->print(F("Waiting to connect..."));
-	  }
+      CC3KPrinter->print(F("Waiting to connect..."));
+    }
     while ((timer > 0) && !checkConnected())
     {
       cc3k_int_poll();
@@ -1158,8 +1152,8 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     }
     if (timer <= 0) {
       CHECK_PRINTER {
-		    CC3KPrinter->println(F("Timed out!"));
-	    }
+        CC3KPrinter->println(F("Timed out!"));
+      }
     }
   } while (!checkConnected());
 
@@ -1291,8 +1285,8 @@ WildFire_CC3000_Client WildFire_CC3000::connectTCP(uint32_t destIP, uint16_t des
   if (-1 == tcp_socket)
   {
     CHECK_PRINTER {
-		CC3KPrinter->println(F("Failed to open socket"));
-	}
+      CC3KPrinter->println(F("Failed to open socket"));
+    }
     return WildFire_CC3000_Client();
   }
   //CC3KPrinter->print(F("DONE (socket ")); CC3KPrinter->print(tcp_socket); CC3KPrinter->println(F(")"));
@@ -1318,11 +1312,11 @@ WildFire_CC3000_Client WildFire_CC3000::connectTCP(uint32_t destIP, uint16_t des
 
   //printHex((byte *)&socketAddress, sizeof(socketAddress));
   //if (CC3KPrinter != 0) CC3KPrinter->print(F("Connecting socket ... "));
-  if (-1 == connect(tcp_socket, &socketAddress, sizeof(socketAddress)))
+  if (-1 == ::connect(tcp_socket, &socketAddress, sizeof(socketAddress)))
   {
     CHECK_PRINTER {
-		CC3KPrinter->println(F("Connection error"));
-	}
+      CC3KPrinter->println(F("Connection error"));
+    }
     closesocket(tcp_socket);
     return WildFire_CC3000_Client();
   }
@@ -1344,8 +1338,8 @@ WildFire_CC3000_Client WildFire_CC3000::connectUDP(uint32_t destIP, uint16_t des
   if (-1 == udp_socket)
   {
     CHECK_PRINTER {
-		CC3KPrinter->println(F("Failed to open socket"));
-	}
+      CC3KPrinter->println(F("Failed to open socket"));
+    }
     return WildFire_CC3000_Client();
   }
   //if (CC3KPrinter != 0) { CC3KPrinter->print(F("DONE (socket ")); CC3KPrinter->print(udp_socket); CC3KPrinter->println(F(")")); }
@@ -1368,11 +1362,11 @@ WildFire_CC3000_Client WildFire_CC3000::connectUDP(uint32_t destIP, uint16_t des
   }
 
   //printHex((byte *)&socketAddress, sizeof(socketAddress));
-  if (-1 == connect(udp_socket, &socketAddress, sizeof(socketAddress)))
+  if (-1 == ::connect(udp_socket, &socketAddress, sizeof(socketAddress)))
   {
     CHECK_PRINTER {
-		CC3KPrinter->println(F("Connection error"));
-	}
+      CC3KPrinter->println(F("Connection error"));
+    }
     closesocket(udp_socket);
     return WildFire_CC3000_Client();
   }
@@ -1408,7 +1402,80 @@ void WildFire_CC3000_Client::operator=(const WildFire_CC3000_Client& other) {
   memcpy(_rx_buf, other._rx_buf, RXBUFFERSIZE);
 }
 
-bool WildFire_CC3000_Client::connected(void) { 
+WildFire_CC3000_Client::operator bool()
+{
+  return connected();
+}
+
+int WildFire_CC3000_Client::connect(const char *host, uint16_t port){
+  
+  // if (!_initialised) return 0;
+  // if (!ulCC3000Connected) return 0;
+  // if (!ulCC3000DHCP) return 0;
+
+  uint32_t ip = 0;
+
+  int16_t r = gethostbyname(host, strlen(host), &ip);
+
+  if (ip!=0 && r!=0)
+    return connect(ip, port);
+  else 
+    return 0;
+}
+
+int WildFire_CC3000_Client::connect(IPAddress destIP, uint16_t destPort)
+{
+  bufsiz = 0;
+  _rx_buf_idx = 0;
+  sockaddr      socketAddress;
+  int32_t       tcp_socket;
+
+  // Create the socket(s)
+  //if (CC3KPrinter != 0) CC3KPrinter->print(F("Creating socket ... "));
+  tcp_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  if (-1 == tcp_socket)
+  {
+    CHECK_PRINTER {
+      CC3KPrinter->println(F("Failed to open socket"));
+    }
+    return 0;
+  }
+  //CC3KPrinter->print(F("DONE (socket ")); CC3KPrinter->print(tcp_socket); CC3KPrinter->println(F(")"));
+
+  // Try to open the socket
+  memset(&socketAddress, 0x00, sizeof(socketAddress));
+  socketAddress.sa_family = AF_INET;
+  socketAddress.sa_data[0] = (destPort & 0xFF00) >> 8;  // Set the Port Number
+  socketAddress.sa_data[1] = (destPort & 0x00FF);
+  socketAddress.sa_data[2] = destIP >> 24;
+  socketAddress.sa_data[3] = destIP >> 16;
+  socketAddress.sa_data[4] = destIP >> 8;
+  socketAddress.sa_data[5] = destIP;
+
+  CHECK_PRINTER {
+    CC3KPrinter->print(F("\n\rConnect to "));
+    CC3KPrinter->print(destIP);
+    CC3KPrinter->print(':');
+    CC3KPrinter->println(destPort);
+  }
+
+  //printHex((byte *)&socketAddress, sizeof(socketAddress));
+  //if (CC3KPrinter != 0) CC3KPrinter->print(F("Connecting socket ... "));
+  if (-1 == ::connect(tcp_socket, &socketAddress, sizeof(socketAddress)))
+  {
+    CHECK_PRINTER {
+      CC3KPrinter->println(F("Connection error"));
+    }
+    closesocket(tcp_socket);
+    return 0;
+  }
+  // if (CC3KPrinter != 0) CC3KPrinter->println(F("DONE"));
+
+  _socket = tcp_socket;
+  return 1;
+}
+
+uint8_t WildFire_CC3000_Client::connected(void) { 
   if (_socket < 0) return false;
 
   if (! available() && closed_sockets[_socket] == true) {
@@ -1422,11 +1489,15 @@ bool WildFire_CC3000_Client::connected(void) {
   else return true;  
 }
 
-int16_t WildFire_CC3000_Client::write(const void *buf, uint16_t len, uint32_t flags)
+size_t WildFire_CC3000_Client::write(const void *buf, uint16_t len, uint32_t flags)
 {
   return send(_socket, buf, len, flags);
 }
 
+size_t WildFire_CC3000_Client::write(const uint8_t *buf, size_t len)
+{
+  return write(buf, len, 0);
+}
 
 size_t WildFire_CC3000_Client::write(uint8_t c)
 {
@@ -1510,10 +1581,15 @@ size_t WildFire_CC3000_Client::fastrprintln(char *str) {
   return r;
 }
 
-int16_t WildFire_CC3000_Client::read(void *buf, uint16_t len, uint32_t flags) 
+int WildFire_CC3000_Client::read(void *buf, uint16_t len, uint32_t flags) 
 {
   return recv(_socket, buf, len, flags);
 
+}
+
+int WildFire_CC3000_Client::read(uint8_t *buf, size_t len) 
+{
+  return read(buf, len, 0);
 }
 
 int32_t WildFire_CC3000_Client::close(void) {
@@ -1522,7 +1598,11 @@ int32_t WildFire_CC3000_Client::close(void) {
   return x;
 }
 
-uint8_t WildFire_CC3000_Client::read(void) 
+void WildFire_CC3000_Client::stop(){
+  close();
+}
+
+int WildFire_CC3000_Client::read(void) 
 {
   while ((bufsiz <= 0) || (bufsiz == _rx_buf_idx)) {
     cc3k_int_poll();
@@ -1541,7 +1621,7 @@ uint8_t WildFire_CC3000_Client::read(void)
   return ret;
 }
 
-uint8_t WildFire_CC3000_Client::available(void) {
+int WildFire_CC3000_Client::available(void) {
   // not open!
   if (_socket < 0) return 0;
 
@@ -1564,6 +1644,28 @@ uint8_t WildFire_CC3000_Client::available(void) {
   //if (CC3KPrinter != 0) } CC3KPrinter->print(F("Select: ")); CC3KPrinter->println(s); }
   if (s == 1) return 1;  // some data is available to read
   else return 0;  // no data is available
+}
+
+void WildFire_CC3000_Client::flush(){
+  // No flush implementation, unclear if necessary.
+}
+
+int WildFire_CC3000_Client::peek(){
+  while ((bufsiz <= 0) || (bufsiz == _rx_buf_idx)) {
+    cc3k_int_poll();
+    // buffer in some more data
+    bufsiz = recv(_socket, _rx_buf, sizeof(_rx_buf), 0);
+    if (bufsiz == -57) {
+      close();
+      return 0;
+    }
+    //if (CC3KPrinter != 0) { CC3KPrinter->println("Read "); CC3KPrinter->print(bufsiz); CC3KPrinter->println(" bytes"); }
+    _rx_buf_idx = 0;
+  }
+  uint8_t ret = _rx_buf[_rx_buf_idx];
+
+  //if (CC3KPrinter != 0) { CC3KPrinter->print("("); CC3KPrinter->write(ret); CC3KPrinter->print(")"); }
+  return ret;
 }
 
 void WildFire_CC3000::setPrinter(Print* p) {
