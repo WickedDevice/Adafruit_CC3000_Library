@@ -39,13 +39,13 @@ uint8_t g_csPin, g_irqPin, g_vbatPin, g_IRQnum, g_SPIspeed;
 
 /*
 static const uint8_t dreqinttable[] = {
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined (__AVR_ATmega328__) || defined(__AVR_ATmega8__) 
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined (__AVR_ATmega328__) || defined(__AVR_ATmega8__)
   2, 0,
   3, 1,
-#elif defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__) 
+#elif defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
   2, 0,
   3, 1,
-  21, 2, 
+  21, 2,
   20, 3,
   19, 4,
   18, 5,
@@ -71,26 +71,26 @@ static const uint8_t dreqinttable[] = {
   20, 20, 21, 21, 22, 22, 23, 23, 24, 24,
   25, 25, 26, 26, 27, 27, 28, 28, 29, 29,
   30, 30, 31, 31, 32, 32, 33, 33,
-#elif  defined(__AVR_ATmega32U4__) 
+#elif  defined(__AVR_ATmega32U4__)
   7, 4,
   3, 0,
   2, 1,
   0, 2,
   1, 3,
-#elif defined(__arm__) && defined(__SAM3X8E__) // Arduino Due  
-  0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 
-  5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 
-  10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 
-  15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 
-  20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 
-  25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 
-  30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 
-  35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 
-  40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 
-  45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 
-  50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 
-  55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 
-  60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 
+#elif defined(__arm__) && defined(__SAM3X8E__) // Arduino Due
+  0, 0, 1, 1, 2, 2, 3, 3, 4, 4,
+  5, 5, 6, 6, 7, 7, 8, 8, 9, 9,
+  10, 10, 11, 11, 12, 12, 13, 13, 14, 14,
+  15, 15, 16, 16, 17, 17, 18, 18, 19, 19,
+  20, 20, 21, 21, 22, 22, 23, 23, 24, 24,
+  25, 25, 26, 26, 27, 27, 28, 28, 29, 29,
+  30, 30, 31, 31, 32, 32, 33, 33, 34, 34,
+  35, 35, 36, 36, 37, 37, 38, 38, 39, 39,
+  40, 40, 41, 41, 42, 42, 43, 43, 44, 44,
+  45, 45, 46, 46, 47, 47, 48, 48, 49, 49,
+  50, 50, 51, 51, 52, 52, 53, 53, 54, 54,
+  55, 55, 56, 56, 57, 57, 58, 58, 59, 59,
+  60, 60, 61, 61, 62, 62, 63, 63, 64, 64,
   65, 65, 66, 66, 67, 67, 68, 68, 69, 69,
   70, 70, 71, 71,
 #endif
@@ -182,7 +182,7 @@ bool WildFire_CC3000::scanSSIDs(uint32_t time)
     }
   }
 
-  // Set  SSID Scan params to includes channels above 11 
+  // Set  SSID Scan params to includes channels above 11
   CHECK_SUCCESS(
       wlan_ioctl_set_scan_params(time, 20, 100, 5, 0x1FFF, -120, 0, 300,
           (unsigned long * ) &intervalTime),
@@ -201,7 +201,7 @@ bool WildFire_CC3000::scanSSIDs(uint32_t time)
 /**************************************************************************/
 /*!
     @brief  Instantiates a new CC3000 class.
-            Note that by default this class will assume the first hardware 
+            Note that by default this class will assume the first hardware
             serial should be used for debug output.  This behavior can be
             changed by explicitly specifying a cc3kPrinter parameter.
 */
@@ -209,7 +209,7 @@ bool WildFire_CC3000::scanSSIDs(uint32_t time)
 WildFire_CC3000::WildFire_CC3000(Print* cc3kPrinter)
 {
   _initialised = false;
-  
+
   #if defined(WILDFIRE_VERSION) && (WILDFIRE_VERSION == 2)
     g_IRQnum = 2;
     g_SPIspeed = SPI_CLOCK_DIVIDER;
@@ -221,9 +221,9 @@ WildFire_CC3000::WildFire_CC3000(Print* cc3kPrinter)
     g_SPIspeed = SPI_CLOCK_DIVIDER;
     g_csPin = 21;
     g_irqPin = 22;
-    g_vbatPin = 23;    
+    g_vbatPin = 23;
   #endif
-  
+
   cc3000Bitset.clear();
 
   CC3KPrinter = cc3kPrinter;
@@ -238,8 +238,8 @@ WildFire_CC3000::WildFire_CC3000(Print* cc3kPrinter)
 /**************************************************************************/
 /*!
     @brief  Setups the HW
-    
-    @args[in] patchReq  
+
+    @args[in] patchReq
               Set this to true if we are starting a firmware patch,
               otherwise false for normal operation
     @args[in] useSmartConfig
@@ -252,9 +252,9 @@ WildFire_CC3000::WildFire_CC3000(Print* cc3kPrinter)
 bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const char *_deviceName)
 {
   if (_initialised) return true;
- 
+
   init_spi();
-  
+
   DEBUGPRINT_F("init\n\r");
   wdt_reset();
   wlan_init(CC3000_UsynchCallback,
@@ -267,30 +267,30 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
 
   wdt_reset();
   wlan_start(patchReq);
-  
+
   DEBUGPRINT_F("ioctl\n\r");
   // Check if we should erase previous stored connection details
   // (most likely written with data from the SmartConfig app)
   if (!useSmartConfigData)
   {
     // Manual connection only (no auto, profiles, etc.)
-    wdt_reset();    
+    wdt_reset();
     wlan_ioctl_set_connection_policy(0, 0, 0);
     // Delete previous profiles from memory
-    
-    wdt_reset();    
+
+    wdt_reset();
     wlan_ioctl_del_profile(255);
   }
   else
   {
     // Auto Connect - the C3000 device tries to connect to any AP it detects during scanning:
     // wlan_ioctl_set_connection_policy(1, 0, 0)
-    
+
     // Fast Connect - the CC3000 device tries to reconnect to the last AP connected to:
     // wlan_ioctl_set_connection_policy(0, 1, 0)
 
     // Use Profiles - the CC3000 device tries to connect to an AP from profiles:
-    wdt_reset();   
+    wdt_reset();
     wlan_ioctl_set_connection_policy(0, 0, 1);
   }
 
@@ -323,14 +323,14 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
       timeout += 10;
       delay(10);
     }
-    
-    delay(1000);  
+
+    delay(1000);
     if (cc3000Bitset.test(CC3000BitSet::HasDHCP))
     {
       mdnsAdvertiser(1, (char *) _deviceName, strlen(_deviceName));
     }
   }
-    
+
   return true;
 }
 
@@ -414,7 +414,7 @@ void WildFire_CC3000::printIPdots(uint32_t ip) {
   CC3KPrinter->print('.');
   CC3KPrinter->print((uint8_t)(ip >> 16));
   CC3KPrinter->print('.');
-  CC3KPrinter->print((uint8_t)(ip >> 24));  
+  CC3KPrinter->print((uint8_t)(ip >> 24));
 }
 
 /**************************************************************************/
@@ -431,7 +431,7 @@ void WildFire_CC3000::printIPdotsRev(uint32_t ip) {
   CC3KPrinter->print('.');
   CC3KPrinter->print((uint8_t)(ip >> 8));
   CC3KPrinter->print('.');
-  CC3KPrinter->print((uint8_t)(ip));  
+  CC3KPrinter->print((uint8_t)(ip));
 }
 
 /**************************************************************************/
@@ -618,9 +618,9 @@ bool WildFire_CC3000::setStaticIPAddress(uint32_t ip, uint32_t subnetMask, uint3
 /**************************************************************************/
 /*!
     @brief    Set the CC3000 to use request an IP and network configuration
-              using DHCP.  Note that this DHCP state will be saved in the 
+              using DHCP.  Note that this DHCP state will be saved in the
               CC3000's non-volatile storage and reused on next reconnect.
-              This means you only need to call this once and the CC3000 will 
+              This means you only need to call this once and the CC3000 will
               remember the setting forever.  To switch to use a static IP,
               call the cc3000.setStaticIPAddress function.
 
@@ -815,7 +815,7 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   // Reset all the previous configurations
   CHECK_SUCCESS(wlan_ioctl_set_connection_policy(WIFI_DISABLE, WIFI_DISABLE, WIFI_DISABLE),
                 "Failed setting the connection policy", false);
-  
+
   // Delete existing profile data
   CHECK_SUCCESS(wlan_ioctl_del_profile(255),
                 "Failed deleting existing profiles", false);
@@ -839,13 +839,13 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   // create new entry for AES encryption key
   CHECK_SUCCESS(nvmem_create_entry(NVMEM_AES128_KEY_FILEID,16),
                 "Failed create NVMEM entry", false);
-  
+
   if (enableAES)
   {
     // write AES key to NVMEM
     CHECK_SUCCESS(aes_write_key((unsigned char *)(smartConfigKey)),
-                  "Failed writing AES key", false);  
-  }  
+                  "Failed writing AES key", false);
+  }
   //CC3KPrinter->println("Set prefix");
   // Wait until CC3000 is disconnected
   CHECK_SUCCESS(wlan_smart_config_set_prefix((char *)&_cc3000_prefix),
@@ -879,7 +879,7 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
                  "wlan_smart_config_process failed",
                  false);
   }
-  
+
   // ******************************************************
   // Decrypt configuration information and add profile
   // ToDo: This is causing stack overflow ... investigate
@@ -890,25 +890,25 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
   // Connect automatically to the AP specified in smart config settings
   CHECK_SUCCESS(wlan_ioctl_set_connection_policy(WIFI_DISABLE, WIFI_DISABLE, WIFI_ENABLE),
                 "Failed setting connection policy", false);
-  
+
   // Reset the CC3000
   wlan_stop();
   delay(1000);
   wlan_start(0);
-  
+
   // Mask out all non-required events
   CHECK_SUCCESS(wlan_set_event_mask(HCI_EVNT_WLAN_KEEPALIVE |
-                HCI_EVNT_WLAN_UNSOL_INIT 
+                HCI_EVNT_WLAN_UNSOL_INIT
                 //HCI_EVNT_WLAN_ASYNC_PING_REPORT |
                 //HCI_EVNT_WLAN_TX_COMPLETE
                 ),
-                "Failed setting event mask", false);  
+                "Failed setting event mask", false);
 
   // Wait for a connection
   time = 0;
   while(!cc3000Bitset.test(CC3000BitSet::IsConnected))
   {
-    wdt_reset();    
+    wdt_reset();
     cc3k_int_poll();
     if (time > WLAN_CONNECT_TIMEOUT) // default of 10s
     {
@@ -920,13 +920,13 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
     time += 10;
     delay(10);
   }
-  
-  delay(1000);  
+
+  delay(1000);
   if (cc3000Bitset.test(CC3000BitSet::HasDHCP))
   {
     mdnsAdvertiser(1, (char *) _deviceName, strlen(_deviceName));
   }
-  
+
   return true;
 }
 
@@ -992,7 +992,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
   {
     cc3000Bitset.reset(CC3000BitSet::IsConnected | CC3000BitSet::HasDHCP);
   }
-  
+
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DHCP)
   {
     cc3000Bitset.set(CC3000BitSet::HasDHCP);
@@ -1035,7 +1035,7 @@ bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t s
   if (!_initialised) {
     return false;
   }
-  
+
   if ( (secMode < 0) || (secMode > 3)) {
     CHECK_PRINTER {
       CC3KPrinter->println(F("Security mode must be between 0 and 3"));
@@ -1101,23 +1101,23 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     // Setup a 4 second SSID scan
     wdt_reset();
     scanSSIDs(4000);
-    
+
     // Wait for results
-    wdt_reset();    
+    wdt_reset();
     delay(4500);
-    
-    wdt_reset();    
+
+    wdt_reset();
     scanSSIDs(0);
-    
+
     /* Attempt to connect to an access point */
     CHECK_PRINTER {
-      CC3KPrinter->print(F("\n\rConnecting to ")); 
+      CC3KPrinter->print(F("\n\rConnecting to "));
       CC3KPrinter->print(ssid);
       CC3KPrinter->print(F("..."));
     }
     if ((secmode == 0) || (strlen(key) == 0)) {
       /* Connect to an unsecured network */
-      wdt_reset();      
+      wdt_reset();
       if (! connectOpen(ssid)) {
         CHECK_PRINTER {
           CC3KPrinter->println(F("Failed!"));
@@ -1128,7 +1128,7 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
       /* NOTE: Secure connections are not available in 'Tiny' mode! */
 #ifndef CC3000_TINY_DRIVER
       /* Connect to a secure network using WPA2, etc */
-      wdt_reset();      
+      wdt_reset();
       if (! connectSecure(ssid, key, secmode)) {
         CHECK_PRINTER {
           CC3KPrinter->println(F("Failed!"));
@@ -1137,7 +1137,7 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
       }
 #endif
     }
-    
+
     timer = WLAN_CONNECT_TIMEOUT;
 
     /* Wait around a bit for the async connected signal to arrive or timeout */
@@ -1176,7 +1176,7 @@ uint16_t WildFire_CC3000::ping(uint32_t ip, uint8_t attempts, uint16_t timeout, 
   //  CC3KPrinter->print(F("Pinging ")); printIPdots(revIP); CC3KPrinter->print(" ");
   //  CC3KPrinter->print(attempts); CC3KPrinter->println(F(" times"));
   //}
-  
+
   netapp_ping_send(&revIP, attempts, size, timeout);
   delay(timeout*attempts*2);
   //if (CC3KPrinter != 0) CC3KPrinter->println(F("Req report"));
@@ -1236,7 +1236,7 @@ bool WildFire_CC3000::checkDHCP(void)
 {
   // Ugly hack to fix UDP issues with the 1.13 firmware by calling
   // gethostbyname on localhost.  The output is completely ignored
-  // but for some reason this call is necessary or else UDP won't 
+  // but for some reason this call is necessary or else UDP won't
   // work.  See this thread from TI for more details and the genesis
   // of the workaround: http://e2e.ti.com/support/wireless_connectivity/f/851/t/342177.aspx
   // Putting this in checkDHCP is a nice way to make it just work
@@ -1273,7 +1273,7 @@ bool WildFire_CC3000::getIPConfig(tNetappIpconfigRetArgs *ipConfig)
   if (!_initialised)      return false;
   if (!cc3000Bitset.test(CC3000BitSet::IsConnected)) return false;
   if (!cc3000Bitset.test(CC3000BitSet::HasDHCP))      return false;
-  
+
   netapp_ipconfig(ipConfig);
   return true;
 }
@@ -1342,7 +1342,7 @@ WildFire_CC3000_Client WildFire_CC3000::connectUDP(uint32_t destIP, uint16_t des
   int32_t       udp_socket;
 
   // Create the socket(s)
-  // socket   = SOCK_STREAM, SOCK_DGRAM, or SOCK_RAW 
+  // socket   = SOCK_STREAM, SOCK_DGRAM, or SOCK_RAW
   // protocol = IPPROTO_TCP, IPPROTO_UDP or IPPROTO_RAW
   //if (CC3KPrinter != 0) CC3KPrinter->print(F("Creating socket... "));
   udp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -1392,7 +1392,7 @@ WildFire_CC3000_Client::WildFire_CC3000_Client(void) {
 }
 
 WildFire_CC3000_Client::WildFire_CC3000_Client(uint16_t s) {
-  _socket = s; 
+  _socket = s;
   bufsiz = 0;
   _rx_buf_idx = 0;
 }
@@ -1419,7 +1419,7 @@ WildFire_CC3000_Client::operator bool()
 }
 
 int WildFire_CC3000_Client::connect(const char *host, uint16_t port){
-  
+
   // if (!_initialised) return 0;
   // if (!ulCC3000Connected) return 0;
   // if (!ulCC3000DHCP) return 0;
@@ -1430,7 +1430,7 @@ int WildFire_CC3000_Client::connect(const char *host, uint16_t port){
 
   if (ip!=0 && r!=0)
     return connect(ip, port);
-  else 
+  else
     return 0;
 }
 
@@ -1486,7 +1486,7 @@ int WildFire_CC3000_Client::connect(IPAddress destIP, uint16_t destPort)
   return 1;
 }
 
-uint8_t WildFire_CC3000_Client::connected(void) { 
+uint8_t WildFire_CC3000_Client::connected(void) {
   if (_socket < 0) return false;
 
   if (! available() && closed_sockets[_socket] == true) {
@@ -1497,7 +1497,7 @@ uint8_t WildFire_CC3000_Client::connected(void) {
     return false;
   }
 
-  else return true;  
+  else return true;
 }
 
 size_t WildFire_CC3000_Client::write(const void *buf, uint16_t len, uint32_t flags)
@@ -1592,13 +1592,13 @@ size_t WildFire_CC3000_Client::fastrprintln(char *str) {
   return r;
 }
 
-int WildFire_CC3000_Client::read(void *buf, uint16_t len, uint32_t flags) 
+int WildFire_CC3000_Client::read(void *buf, uint16_t len, uint32_t flags)
 {
   return recv(_socket, buf, len, flags);
 
 }
 
-int WildFire_CC3000_Client::read(uint8_t *buf, size_t len) 
+int WildFire_CC3000_Client::read(uint8_t *buf, size_t len)
 {
   return read(buf, len, 0);
 }
@@ -1613,7 +1613,7 @@ void WildFire_CC3000_Client::stop(){
   close();
 }
 
-int WildFire_CC3000_Client::read(void) 
+int WildFire_CC3000_Client::read(void)
 {
   while ((bufsiz <= 0) || (bufsiz == _rx_buf_idx)) {
     cc3k_int_poll();
