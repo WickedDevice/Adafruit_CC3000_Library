@@ -1,19 +1,19 @@
 /**************************************************************************/
-/*! 
+/*!
   @file     Adafruit_CC3000.h
   @author   KTOWN (Kevin Townsend for Adafruit Industries)
-  @license  BSD (see license.txt) 
+  @license  BSD (see license.txt)
 
   This is a library for the Adafruit CC3000 WiFi breakout board
   This library works with the Adafruit CC3000 breakout
   ----> https://www.adafruit.com/products/1469
-  
-  Check out the links above for our tutorials and wiring diagrams 
+
+  Check out the links above for our tutorials and wiring diagrams
   These chips use SPI to communicate.
-  
-  Adafruit invests time and resources providing this open source code, 
-  please support Adafruit and open-source hardware by purchasing 
-  products from Adafruit! 
+
+  Adafruit invests time and resources providing this open source code,
+  please support Adafruit and open-source hardware by purchasing
+  products from Adafruit!
 */
 /**************************************************************************/
 
@@ -73,7 +73,7 @@ typedef struct Result_Struct
 } ResultStruct_t;   /**!ResultStruct_t : data struct to store SSID scan results */
 
 /* Enum for wlan_ioctl_statusget results */
-typedef enum 
+typedef enum
 {
   STATUS_DISCONNECTED = 0,
   STATUS_SCANNING     = 1,
@@ -85,12 +85,12 @@ class WildFire_CC3000;
 
 class WildFire_CC3000_Client : public Client {
  public:
-  WildFire_CC3000_Client(uint16_t s);
+  WildFire_CC3000_Client(int32_t s);
   WildFire_CC3000_Client(void);
   WildFire_CC3000_Client(const WildFire_CC3000_Client& copy);
   void operator=(const WildFire_CC3000_Client& other);
-  
-  // NOTE: If public functions below are added/modified/removed please make sure to update the 
+
+  // NOTE: If public functions below are added/modified/removed please make sure to update the
   // WildFire_CC3000_ClientRef class to match!
 
   int connect(IPAddress ip, uint16_t port);
@@ -153,7 +153,7 @@ class WildFire_CC3000 {
 
     bool     connectToAP(const char *ssid, const char *key, uint8_t secmode, uint8_t attempts = 0);
     bool     connectSecure(const char *ssid, const char *key, int32_t secMode);
-    bool     connectOpen(const char *ssid); 
+    bool     connectOpen(const char *ssid);
     bool     checkConnected(void);
     bool     checkDHCP(void);
     bool     getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t *gateway, uint32_t *dhcpserv, uint32_t *dnsserv);
@@ -162,7 +162,7 @@ class WildFire_CC3000 {
 
     WildFire_CC3000_Client connectTCP(uint32_t destIP, uint16_t destPort);
     WildFire_CC3000_Client connectUDP(uint32_t destIP, uint16_t destPort);
-     
+
     #ifndef CC3000_TINY_DRIVER
     bool     getFirmwareVersion(uint8_t *major, uint8_t *minor);
     status_t getStatus(void);
