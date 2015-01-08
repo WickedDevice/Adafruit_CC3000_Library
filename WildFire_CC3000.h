@@ -186,9 +186,17 @@ class WildFire_CC3000 {
 
     void setPrinter(Print*);
 
+    // tiny watchdog support
+    int8_t tiny_watchdog_pin;
+    int32_t tiny_watchdog_pet_interval_ms; // int32 like in blink without delay (interval)
+    void enableTinyWatchdog(uint8_t pin, uint16_t window_min_ms);
+
   private:
     bool _initialised;
 
+    // tiny watchdog support
+    void petTinyWatchdog(boolean start = false);
+    void delay4500(void);
 };
 
 extern Print* CC3KPrinter;

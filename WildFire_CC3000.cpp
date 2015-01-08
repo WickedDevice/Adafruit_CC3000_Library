@@ -227,6 +227,9 @@ WildFire_CC3000::WildFire_CC3000(Print* cc3kPrinter)
   cc3000Bitset.clear();
 
   CC3KPrinter = cc3kPrinter;
+
+  // tiny watchdog support
+  tiny_watchdog_pin = -1;
 }
 
 /* *********************************************************************** */
@@ -257,6 +260,7 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
 
   DEBUGPRINT_F("init\n\r");
   wdt_reset();
+  petTinyWatchdog(true);
   wlan_init(CC3000_UsynchCallback,
             sendWLFWPatch, sendDriverPatch, sendBootLoaderPatch,
             ReadWlanInterruptPin,
@@ -266,6 +270,7 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
   DEBUGPRINT_F("start\n\r");
 
   wdt_reset();
+  petTinyWatchdog();
   wlan_start(patchReq);
 
   DEBUGPRINT_F("ioctl\n\r");
@@ -275,10 +280,12 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
   {
     // Manual connection only (no auto, profiles, etc.)
     wdt_reset();
+    petTinyWatchdog();
     wlan_ioctl_set_connection_policy(0, 0, 0);
     // Delete previous profiles from memory
 
     wdt_reset();
+    petTinyWatchdog();
     wlan_ioctl_del_profile(255);
   }
   else
@@ -291,10 +298,12 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
 
     // Use Profiles - the CC3000 device tries to connect to an AP from profiles:
     wdt_reset();
+    petTinyWatchdog();
     wlan_ioctl_set_connection_policy(0, 0, 1);
   }
 
   wdt_reset();
+  petTinyWatchdog();
   CHECK_SUCCESS(
     wlan_set_event_mask(HCI_EVNT_WLAN_UNSOL_INIT        |
                         //HCI_EVNT_WLAN_ASYNC_PING_REPORT |// we want ping reports
@@ -310,8 +319,12 @@ bool WildFire_CC3000::begin(uint8_t patchReq, bool useSmartConfigData, const cha
   {
     // Wait for a connection
     uint32_t timeout = 0;
+    petTinyWatchdog(true);
     while(!cc3000Bitset.test(CC3000BitSet::IsConnected))
     {
+      wdt_reset();
+      petTinyWatchdog();
+
       cc3k_int_poll();
       if(timeout > WLAN_CONNECT_TIMEOUT)
       {
@@ -761,7 +774,7 @@ bool WildFire_CC3000::startSSIDscan(uint32_t *index) {
   }
 
   // Wait for results
-  delay(4500);
+  delay4500();
 
   CHECK_SUCCESS(wlan_ioctl_get_scan_results(0, (uint8_t* ) &SSIDScanResultBuff),
                 "SSID scan failed!", false);
@@ -822,8 +835,12 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
 
   // CC3KPrinter->println("Disconnecting");
   // Wait until CC3000 is disconnected
+
+  petTinyWatchdog(true);
   while (cc3000Bitset.test(CC3000BitSet::IsConnected)) {
     wdt_reset();
+    petTinyWatchdog();
+
     cc3k_int_poll();
     CHECK_SUCCESS(wlan_disconnect(),
                   "Failed to disconnect from AP", false);
@@ -833,7 +850,10 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
 
   // Reset the CC3000
   wlan_stop();
+  petTinyWatchdog();
   delay(1000);
+  petTinyWatchdog();
+
   wlan_start(0);
 
   // create new entry for AES encryption key
@@ -857,9 +877,11 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
                 "Failed starting smart config", false);
 
   // Wait for smart config process complete (event in CC3000_UsynchCallback)
+  petTinyWatchdog(true);
   while (!cc3000Bitset.test(CC3000BitSet::IsSmartConfigFinished))
   {
     wdt_reset();
+    petTinyWatchdog();
     cc3k_int_poll();
     // waiting here for event SIMPLE_CONFIG_DONE
     time+=10;
@@ -906,9 +928,11 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
 
   // Wait for a connection
   time = 0;
+  petTinyWatchdog(true);
   while(!cc3000Bitset.test(CC3000BitSet::IsConnected))
   {
     wdt_reset();
+    petTinyWatchdog();
     cc3k_int_poll();
     if (time > WLAN_CONNECT_TIMEOUT) // default of 10s
     {
@@ -1099,14 +1123,12 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     /* MEME: not sure why this is absolutely required but the cc3k freaks
        if you dont. maybe bootup delay? */
     // Setup a 4 second SSID scan
-    wdt_reset();
     scanSSIDs(4000);
 
-    // Wait for results
-    wdt_reset();
-    delay(4500);
+    delay4500();
 
     wdt_reset();
+    petTinyWatchdog();
     scanSSIDs(0);
 
     /* Attempt to connect to an access point */
@@ -1118,6 +1140,7 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     if ((secmode == 0) || (strlen(key) == 0)) {
       /* Connect to an unsecured network */
       wdt_reset();
+      petTinyWatchdog();
       if (! connectOpen(ssid)) {
         CHECK_PRINTER {
           CC3KPrinter->println(F("Failed!"));
@@ -1129,6 +1152,7 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
 #ifndef CC3000_TINY_DRIVER
       /* Connect to a secure network using WPA2, etc */
       wdt_reset();
+      petTinyWatchdog();
       if (! connectSecure(ssid, key, secmode)) {
         CHECK_PRINTER {
           CC3KPrinter->println(F("Failed!"));
@@ -1241,6 +1265,7 @@ bool WildFire_CC3000::checkDHCP(void)
   // of the workaround: http://e2e.ti.com/support/wireless_connectivity/f/851/t/342177.aspx
   // Putting this in checkDHCP is a nice way to make it just work
   // for people without any need to add to their sketch.
+  petTinyWatchdog();
   if (cc3000Bitset.test(CC3000BitSet::HasDHCP)) {
     uint32_t output;
     gethostbyname("localhost", 9, &output);
@@ -1689,4 +1714,40 @@ int WildFire_CC3000_Client::peek(){
 
 void WildFire_CC3000::setPrinter(Print* p) {
   CC3KPrinter = p;
+}
+
+void WildFire_CC3000::enableTinyWatchdog(uint8_t pin, uint16_t interval_ms){
+  tiny_watchdog_pin = pin;
+  tiny_watchdog_pet_interval_ms = interval_ms;
+}
+
+void WildFire_CC3000::petTinyWatchdog(boolean start){
+  static uint32_t previousMillis = 0;
+  if(tiny_watchdog_pin >= 0){
+    if(start) {
+      previousMillis = millis();
+    }
+
+    uint32_t currentMillis = millis();
+    if(currentMillis - previousMillis >= tiny_watchdog_pet_interval_ms) {
+      previousMillis = currentMillis;
+      digitalWrite(tiny_watchdog_pin, LOW);
+      delay(3);
+      digitalWrite(tiny_watchdog_pin, HIGH);
+      //Serial.println(".");
+    }
+  }
+}
+
+void WildFire_CC3000::delay4500(void){
+  // Wait for results
+  uint32_t previousMillis = millis();
+  for(;;){
+    uint32_t currentMillis = millis();
+    if(currentMillis - previousMillis >= 4500){
+      wdt_reset();
+      petTinyWatchdog();
+      break;
+    }
+  }
 }
