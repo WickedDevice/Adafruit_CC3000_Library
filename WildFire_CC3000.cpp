@@ -1083,14 +1083,27 @@ bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t s
     return false;
   }
 
+  wdt_reset();
+  while(!petTinyWatchdog());
   CHECK_SUCCESS(wlan_ioctl_set_connection_policy(0, 0, 0),
                 "Failed setting the connection policy",
                 false);
+
+  wdt_reset();
+  petTinyWatchdog();
+
   delay(500);
+
+  wdt_reset();
+  while(!petTinyWatchdog());
+
   CHECK_SUCCESS(wlan_connect(secMode, (char *)ssid, strlen(ssid),
                              NULL,
                              (unsigned char *)key, strlen(key)),
                 "SSID connection failed", false);
+
+  wdt_reset();
+  while(!petTinyWatchdog());
 
   /* Wait for 'HCI_EVNT_WLAN_UNSOL_CONNECT' in CC3000_UsynchCallback */
 
@@ -1110,7 +1123,10 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
   // If attempts is zero interpret that as no limit on number of retries.
   bool retryForever = attempts == 0;
 
+  petTinyWatchdog(true);
   do {
+    while(!petTinyWatchdog());
+    wdt_reset();
     // Stop if the max number of attempts have been tried.
     if (!retryForever) {
       if (attempts == 0) {
@@ -1123,12 +1139,14 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     /* MEME: not sure why this is absolutely required but the cc3k freaks
        if you dont. maybe bootup delay? */
     // Setup a 4 second SSID scan
-    scanSSIDs(4000);
+    while(!petTinyWatchdog());
+    wdt_reset();
 
+    scanSSIDs(4000);
     delay4500();
 
     wdt_reset();
-    petTinyWatchdog();
+    while(!petTinyWatchdog());
     scanSSIDs(0);
 
     /* Attempt to connect to an access point */
@@ -1140,11 +1158,14 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     if ((secmode == 0) || (strlen(key) == 0)) {
       /* Connect to an unsecured network */
       wdt_reset();
-      petTinyWatchdog();
+      while(!petTinyWatchdog());
+
       if (! connectOpen(ssid)) {
         CHECK_PRINTER {
           CC3KPrinter->println(F("Failed!"));
         }
+        wdt_reset();
+        petTinyWatchdog();
         continue;
       }
     } else {
@@ -1152,11 +1173,13 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
 #ifndef CC3000_TINY_DRIVER
       /* Connect to a secure network using WPA2, etc */
       wdt_reset();
-      petTinyWatchdog();
+      while(!petTinyWatchdog());
       if (! connectSecure(ssid, key, secmode)) {
         CHECK_PRINTER {
           CC3KPrinter->println(F("Failed!"));
         }
+        wdt_reset();
+        petTinyWatchdog();
         continue;
       }
 #endif
@@ -1170,6 +1193,8 @@ bool WildFire_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     }
     while ((timer > 0) && !checkConnected())
     {
+      petTinyWatchdog();
+      wdt_reset();
       cc3k_int_poll();
       delay(10);
       timer -= 10;
@@ -1721,7 +1746,7 @@ void WildFire_CC3000::enableTinyWatchdog(uint8_t pin, uint16_t interval_ms){
   tiny_watchdog_pet_interval_ms = interval_ms;
 }
 
-void WildFire_CC3000::petTinyWatchdog(boolean start){
+boolean WildFire_CC3000::petTinyWatchdog(boolean start){
   static uint32_t previousMillis = 0;
   if(tiny_watchdog_pin >= 0){
     if(start) {
@@ -1735,8 +1760,11 @@ void WildFire_CC3000::petTinyWatchdog(boolean start){
       delay(3);
       digitalWrite(tiny_watchdog_pin, HIGH);
       //Serial.println(".");
+      return true;
     }
   }
+
+  return false;
 }
 
 void WildFire_CC3000::delay4500(void){
@@ -1744,9 +1772,9 @@ void WildFire_CC3000::delay4500(void){
   uint32_t previousMillis = millis();
   for(;;){
     uint32_t currentMillis = millis();
+    wdt_reset();
+    petTinyWatchdog();
     if(currentMillis - previousMillis >= 4500){
-      wdt_reset();
-      petTinyWatchdog();
       break;
     }
   }

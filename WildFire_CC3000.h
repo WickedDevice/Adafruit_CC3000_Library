@@ -195,7 +195,7 @@ class WildFire_CC3000 {
     bool _initialised;
 
     // tiny watchdog support
-    void petTinyWatchdog(boolean start = false);
+    boolean petTinyWatchdog(boolean start = false);
     void delay4500(void);
 };
 
