@@ -1763,6 +1763,10 @@ boolean WildFire_CC3000::petTinyWatchdog(boolean start){
       return true;
     }
   }
+  else{
+    // always return true if you're not using tinyWatchdog
+    return true;
+  }
 
   return false;
 }
