@@ -1,5 +1,5 @@
 {
-  "name": "WildFire-Arduino-CC3000",
+  "name": "WildFire-CC3000",
   "keywords": "wifi, wi-fi, http, web, server, json, rest, spi",
   "description": "Library code for Wicked Device's WildFire CC3000 platform",
   "repository":
