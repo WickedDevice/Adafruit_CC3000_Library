@@ -30,9 +30,10 @@ This example does a test of the SNTP (Simple Network Time Protocol) client:
 //#include "utility/NetTime.h"
 #include <string.h>
 #include "utility/debug.h"
-#include "utility/sntp.h"
+
 #include <WildFire.h>
 WildFire wf;
+#include "sntp.h"
 
 WildFire_CC3000 cc3000;
 

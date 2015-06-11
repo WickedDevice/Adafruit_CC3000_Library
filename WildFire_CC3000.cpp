@@ -33,7 +33,6 @@
 #include "utility/socket.h"
 #include "utility/wlan.h"
 #include "utility/debug.h"
-#include "utility/sntp.h"
 
 uint8_t g_csPin, g_irqPin, g_vbatPin, g_IRQnum, g_SPIspeed;
 
@@ -1581,7 +1580,7 @@ size_t WildFire_CC3000_Client::fastrprint(const __FlashStringHelper *ifsh)
   char _tx_buf[TXBUFFERSIZE];
   uint8_t idx = 0;
 
-  const char PROGMEM *p = (const char PROGMEM *)ifsh;
+  const char *p = (const char PROGMEM *)ifsh;
   size_t n = 0;
   while (1) {
     unsigned char c = pgm_read_byte(p++);
