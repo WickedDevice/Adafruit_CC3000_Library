@@ -789,13 +789,23 @@ void WildFire_CC3000::stopSSIDscan(void) {
 }
 
 uint8_t WildFire_CC3000::getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssidname) {
+  return getNextSSID(rssi, secMode, ssidname, NULL);
+}
+
+uint8_t WildFire_CC3000::getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssidname, uint8_t *bssid) {
     uint8_t valid = (SSIDScanResultBuff.rssiByte & (~0xFE));
     *rssi = (SSIDScanResultBuff.rssiByte >> 1);
     *secMode = (SSIDScanResultBuff.Sec_ssidLen & (~0xFC));
     uint8_t ssidLen = (SSIDScanResultBuff.Sec_ssidLen >> 2);
     strncpy(ssidname, (char *)SSIDScanResultBuff.ssid_name, ssidLen);
     ssidname[ssidLen] = 0;
-
+    
+    if(bssid != NULL){
+      for(uint8_t ii = 0; ii < 6; ii++){
+        bssid[ii] = SSIDScanResultBuff.bssid[ii];
+      }
+    }
+    
     CHECK_SUCCESS(wlan_ioctl_get_scan_results(0, (uint8_t* ) &SSIDScanResultBuff),
                   "Problem with the SSID scan results", false);
     return valid;
@@ -966,6 +976,11 @@ bool WildFire_CC3000::startSmartConfig(const char *_deviceName, const char *smar
 /**************************************************************************/
 bool WildFire_CC3000::connectOpen(const char *ssid)
 {
+  return connectOpen(ssid, NULL);
+}
+
+bool WildFire_CC3000::connectOpen(const char *ssid, const uint8_t *bssid)
+{
   if (!_initialised) {
     return false;
   }
@@ -976,7 +991,7 @@ bool WildFire_CC3000::connectOpen(const char *ssid)
     delay(500);
     CHECK_SUCCESS(wlan_connect(WLAN_SEC_UNSEC,
           (const char*)ssid, strlen(ssid),
-          0 ,NULL,0),
+          (UINT8 *)bssid ,NULL,0),
           "SSID connection failed", false);
   #else
     wlan_connect(ssid, strlen(ssid));
@@ -1053,7 +1068,11 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
 */
 /**************************************************************************/
 #ifndef CC3000_TINY_DRIVER
-bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t secMode)
+bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t secMode){
+  return connectSecure(ssid, key, secMode, NULL);
+}
+
+bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t secMode, const uint8_t *bssid)
 {
   if (!_initialised) {
     return false;
@@ -1097,7 +1116,7 @@ bool WildFire_CC3000::connectSecure(const char *ssid, const char *key, int32_t s
   while(!petTinyWatchdog());
 
   CHECK_SUCCESS(wlan_connect(secMode, (char *)ssid, strlen(ssid),
-                             NULL,
+                             (UINT8 *)bssid,
                              (unsigned char *)key, strlen(key)),
                 "SSID connection failed", false);
 

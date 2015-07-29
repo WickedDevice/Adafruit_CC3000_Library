@@ -153,7 +153,9 @@ class WildFire_CC3000 {
 
     bool     connectToAP(const char *ssid, const char *key, uint8_t secmode, uint8_t attempts = 0);
     bool     connectSecure(const char *ssid, const char *key, int32_t secMode);
+    bool     connectSecure(const char *ssid, const char *key, int32_t secMode, const uint8_t *bssid);
     bool     connectOpen(const char *ssid);
+    bool     connectOpen(const char *ssid, const uint8_t *bssid);
     bool     checkConnected(void);
     bool     checkDHCP(void);
     bool     getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t *gateway, uint32_t *dhcpserv, uint32_t *dnsserv);
@@ -169,7 +171,8 @@ class WildFire_CC3000 {
     bool     startSSIDscan(uint32_t *index);
     void     stopSSIDscan();
     uint8_t  getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssidname);
-
+    uint8_t  getNextSSID(uint8_t *rssi, uint8_t *secMode, char *ssidname, uint8_t *bssid);
+    
     bool     listSSIDResults(void);
     bool     startSmartConfig(const char *_deviceName = NULL, const char *smartConfigKey = NULL, uint32_t = SMART_CONFIG_TIMEOUT);
     bool     getIPConfig(tNetappIpconfigRetArgs *ipConfig);

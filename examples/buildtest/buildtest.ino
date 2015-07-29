@@ -299,7 +299,7 @@ void listSSIDResults(void)
   uint32_t index;
   uint8_t valid, rssi, sec;
   char ssidname[33]; 
-
+  uint8_t bssid[6];
   if (!cc3000.startSSIDscan(&index)) {
     Serial.println(F("SSID scan failed!"));
     return;
@@ -311,10 +311,12 @@ void listSSIDResults(void)
   while (index) {
     index--;
 
-    valid = cc3000.getNextSSID(&rssi, &sec, ssidname);
+    valid = cc3000.getNextSSID(&rssi, &sec, ssidname, bssid);
     
     Serial.print(F("SSID Name    : ")); Serial.print(ssidname);
     Serial.println();
+    Serial.print(F("BSSID: "));
+    cc3000.printHex((byte*)&bssid, 6); 
     Serial.print(F("RSSI         : "));
     Serial.println(rssi);
     Serial.print(F("Security Mode: "));
